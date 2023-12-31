@@ -30,6 +30,14 @@ jobs:
         run: ls
       - name: check output
         run: ls dev/update-embeddings-list
+      - name: Check if embedded-repos.md exists
+        if: ${{ !env.file_exists }}
+        run: |
+          echo 'Error: embedded-repos.md does not exist.' >&2
+          exit 1
+        env:
+          file_exists: ${{ fromJson('$(ls dev/update-embeddings-list/embedded-repos.md)') }}
+
       - name: move into doc folder
         run: mv dev/update-embeddings-list/embedded-repos.md doc/cody/embedded-repos.md
       - name: check list in doc folder
