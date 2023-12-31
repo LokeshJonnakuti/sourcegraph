@@ -24,6 +24,10 @@ async function start(): Promise<void> {
         const markdown = embeddedReposToMarkdown(embeddedRepos)
 
         fs.writeFileSync('embedded-repos.md', markdown)
+        if (!fs.existsSync('embedded-repos.md')) {
+            console.error('Failed to create embedded-repos.md')
+            throw new Error('Failed to create embedded-repos.md')
+        }
     } catch (error: unknown) {
         console.error(error)
     }
@@ -48,6 +52,8 @@ async function gqlRequest(endpoint: string): Promise<Embedding[]> {
                         id
                         state
                         repo {
+                        name
+                        url
                         name
                         url
                         }
