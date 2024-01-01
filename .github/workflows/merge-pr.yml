@@ -26,4 +26,10 @@ jobs:
           gh pr review $PR_NUMBER --approve
           echo "squashing PR: $PR_NUMBER"
           gh pr merge $PR_NUMBER --auto --squash
+          if test -f "dev/update-embeddings-list/embedded-repos.md"; then
+            mv dev/update-embeddings-list/embedded-repos.md doc/cody/embedded-repos.md
+          else
+            echo "Source file does not exist...skipping"
+            exit 0
+          fi
         fi
