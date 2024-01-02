@@ -24,8 +24,8 @@ async function start(): Promise<void> {
         const markdown = embeddedReposToMarkdown(embeddedRepos)
 
         fs.writeFileSync('embedded-repos.md', markdown)
-    } catch (error: unknown) {
-        console.error(error)
+    } catch (error: any) {
+        console.error('Error executing the start function:', error)
     }
 }
 
@@ -67,8 +67,9 @@ async function gqlRequest(endpoint: string): Promise<Embedding[]> {
             pagination = data.repoEmbeddingJobs.pageInfo.hasNextPage
             endCursor = data.repoEmbeddingJobs.pageInfo.endCursor
         }
-    } catch (error: unknown) {
-        console.error(error)
+    } catch (error: any) {
+        console.error('Error executing gqlRequest:', error)
+        throw error
     }
 
     return embeddedRepos
@@ -76,6 +77,10 @@ async function gqlRequest(endpoint: string): Promise<Embedding[]> {
 
 export function filter(repos: Embedding[]): Embedding[] {
     const filtered = repos.filter(item => item.state === 'COMPLETED')
+    if (filtered.length === 0) {
+        console.error('Filter function: No completed embeddings found.')
+        throw new Error('Filter function: No completed embeddings found.')
+    }
     const result = Array.from(new Set(filtered.map(x => x.repo?.name))).map(name =>
         filtered.find(x => x.repo?.name === name)
     ) as Embedding[]
@@ -119,7 +124,8 @@ export function embeddedReposToMarkdown(repos: Embedding[] | undefined): string 
     }
 
     if (listOfRepos.length === 0) {
-        throw new Error('no embedded repos found!')
+        console.error('embeddedReposToMarkdown function: No embedded repos found.')
+        throw new Error('embeddedReposToMarkdown function: No embedded repos found.')
     }
 
     const sorted = sort(listOfRepos)
