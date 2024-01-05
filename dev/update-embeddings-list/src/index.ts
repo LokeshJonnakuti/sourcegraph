@@ -23,7 +23,7 @@ async function start(): Promise<void> {
 
         const markdown = embeddedReposToMarkdown(embeddedRepos)
 
-        fs.writeFileSync('embedded-repos.md', markdown)
+        fs.writeFileSync('dev/update-embeddings-list/embedded-repos.md', markdown)
     } catch (error: unknown) {
         console.error(error)
     }
