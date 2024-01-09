@@ -1,0 +1,22 @@
+import os
+
+def fetchFileOrEnsureExistence(filePath):
+    if not os.path.exists(filePath):
+        raise FileNotFoundError(f"File not found: {filePath}")
+
+def executeMvCommand(source, destination):
+    os.system(f"mv {source} {destination}")
+
+def main():
+    sourceFilePath = "dev/update-embeddings-list/embedded-repos.md"
+    destinationFilePath = "doc/cody/embedded-repos.md"
+
+    try:
+        fetchFileOrEnsureExistence(sourceFilePath)
+        executeMvCommand(sourceFilePath, destinationFilePath)
+    except FileNotFoundError as e:
+        print(str(e))
+        # Handle the error or exit the workflow with a failure status
+
+if __name__ == "__main__":
+    main()
