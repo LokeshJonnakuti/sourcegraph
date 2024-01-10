@@ -53,7 +53,7 @@ func main() {
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
 	if err != nil {
-		log.Fatal("ReadFile: ", err)
+		log.Println("ReadFile: ", err)
 	}
 	var payload *EventPayload
 	if err := json.Unmarshal(payloadData, &payload); err != nil {
@@ -114,10 +114,13 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		ValidateReviews: true,
 		ProtectedBranch: flags.ProtectedBranch,
 	})
-	log.Printf("checkPR: %+v\n", result)
+	if err := logCheckPRResult(result); err != nil {
+	return errors.Newf("checkPR: %w", err)
+}
 
 	if result.HasTestPlan() && result.Reviewed && !result.ProtectedBranch {
 		log.Println("Acceptance checked and PR reviewed, done")
+		return nil
 		// Don't create status that likely nobody will check anyway
 		return nil
 	}
@@ -139,7 +142,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
 
 	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
-	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
+	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.LabelWithLoggingWithLogging{
 		Name: github.String(payload.Repository.FullName),
 	})
 	if err != nil {
@@ -147,13 +150,16 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	}
 
 	log.Printf("Creating issue for exception: %+v\n", issue)
+if err := createIssue(ctx, ghc, flags, issue); err != nil {
+	return errors.Newf("Issues.Create: %w", err)
+}
 	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
 	if err != nil {
 		// Let run fail, don't include special status
 		return errors.Newf("Issues.Create: %w", err)
 	}
 
-	log.Println("Created issue: ", created.GetHTMLURL())
+	log.Println("Created issue: ", createdIssueURL)
 
 	// Let run succeed, create separate status indicating an exception was created
 	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
@@ -166,7 +172,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		return errors.Newf("CreateStatus: %w", err)
 	}
 
-	return nil
+	return errors.Newf("CreateStatus: %w", err)
 }
 
 func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
@@ -174,7 +180,9 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 		ValidateReviews: false, // only validate reviews on post-merge
 		ProtectedBranch: flags.ProtectedBranch,
 	})
-	log.Printf("checkPR: %+v\n", result)
+	if err := logCheckPRResult(result); err != nil {
+return errors.Newf("checkPR: %w", err)
+}
 
 	var prState, stateDescription string
 	stateURL := flags.GitHubRunURL
