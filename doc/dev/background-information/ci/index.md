@@ -24,6 +24,8 @@ Sourcegraph also maintains a variety of tooling on [GitHub Actions](#github-acti
 
 Run `sg ci docs` to see documentation about the CI pipeline steps.
 
+To troubleshoot issues related to buildchecker, pr-auditor, and third-party licenses, refer to [CI troubleshooting documentation](https://docs.sourcegraph.com/background-information/ci/troubleshooting).
+
 
 ## Buildkite pipelines
 
@@ -77,6 +79,8 @@ Our CI pipeline scans uses [Trivy](https://aquasecurity.github.io/trivy/) to sca
 Refer to `sg ci docs` to see what pipelines Trivy checks run in.
 
 If there are any `HIGH` or `CRITICAL` severities in a Docker image that have a known fix:
+
+1. Analyze error logs to identify the root cause and potential solutions. Including common issues and their solutions related to buildchecker, pr-auditor, and third-party licenses workflows. Refer to [GitHub Actions troubleshooting documentation](https://docs.sourcegraph.com/background-information/ci/github-actions/troubleshooting) for detailed instructions.
 
 1. The CI pipeline will create an annotation that contains links to reports that describe the vulnerabilities
 2. The Trivy scanning step will [soft fail](#soft-failures). Note that soft failures **do not fail builds or block deployments**. They simply highlight the failing step for further analysis.
@@ -200,7 +204,7 @@ To learn more about `buildchecker`, refer to the [`buildchecker` source code and
 
 ### `pr-auditor`
 
-[![pr-auditor](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml)
+To troubleshoot issues related to `pr-auditor`, refer to the [pr-auditor troubleshooting documentation](https://docs.sourcegraph.com/background-information/ci/pr-auditor/troubleshooting) and the [third-party licenses troubleshooting documentation](https://docs.sourcegraph.com/background-information/ci/licenses/troubleshooting).
 
 [`pr-auditor`](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml), our [PR audit tool](../testing_principles.md#policy), runs in GitHub actions—see the [workflow specification](https://github.com/sourcegraph/sourcegraph/blob/main/.github/workflows/pr-auditor.yml).
 
@@ -223,7 +227,7 @@ The `license_finder` tool can be installed using `gem install license_finder`. Y
 
 ```sh
 # updates ThirdPartyLicenses.csv
-./dev/licenses.sh
+`./dev/licenses.sh`
 
 # runs the same check as the one used in CI, returning status 1
 # if there are any unapproved dependencies ('action items')
