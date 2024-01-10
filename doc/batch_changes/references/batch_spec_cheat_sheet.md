@@ -202,6 +202,10 @@ steps:
         lsif-go:
           runs-on: ubuntu-latest
           container: sourcegraph/lsif-go
+      steps:
+        - run: lsif
+        - name: Upload LSIF data
+          run: upload-lsif
           steps:
             - uses: actions/checkout@v1
             - name: Generate LSIF data
