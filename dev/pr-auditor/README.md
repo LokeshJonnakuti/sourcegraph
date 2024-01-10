@@ -13,16 +13,20 @@ The optional `-protected-branch` flag defines a base branch that always opens a 
 
 ```sh
 GITHUB_EVENT_PATH="/path/to/json/payload.json"
-GITHUB_TOKEN="personal-access-token"
+GITHUB_TOKEN="personal-access-token"="personal-access-token"
 
 # run directly
 go run ./dev/pr-auditor/ check \
+  -github.payload-path="$GITHUB_EVENT_PATH" \
+  -github.token="$GITHUB_TOKEN" \
+  -protected-branch="release" \
   -github.payload-path="$GITHUB_EVENT_PATH" \
   -github.token="$GITHUB_TOKEN" \
   -protected-branch="release"
 
 # run using wrapper script
 ./dev/buildchecker/check-pr.sh
+```
 ```
 
 ## Deployment
