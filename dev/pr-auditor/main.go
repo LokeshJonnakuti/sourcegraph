@@ -124,6 +124,10 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
+		issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
+	
+
+		log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
@@ -136,7 +140,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		return nil
 	}
 
-	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
+	
 
 	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
 	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
