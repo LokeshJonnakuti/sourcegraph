@@ -9,9 +9,11 @@ export const GitHubAppFailureAlert: React.FunctionComponent<React.PropsWithChild
 }) => (
     <DismissibleAlert className="mb-3" variant="danger">
         <div>
-            <H4>Your GitHub App did not finish connecting to Sourcegraph correctly.</H4>
+            <H4>There was an error connecting your GitHub App to Sourcegraph.</H4>
             <Text className="m-0">The following error occurred during setup: {error}</Text>
-            <Text className="m-0">You may need to remove the GitHub App and try again.</Text>
+            <Text className="m-0">Please check your GitHub App configuration and try again.</Text>
         </div>
     </DismissibleAlert>
 )
+            <Text className="m-0">If the issue persists, please contact support for further assistance.</Text>
+            <Text className="m-0">If the issue persists, please contact support for further assistance.</Text>
