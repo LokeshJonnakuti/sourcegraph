@@ -133,7 +133,7 @@ log.Println("No action needed, nice!")
 		})
 		if statusErr != nil {
 			log.Printf("Error creating status: %s", statusErr)
-return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
+return errors.Newf("Error in postMergeAudit: %s (%w)", result.Error, statusErr)
 		}
 		return nil
 	}
