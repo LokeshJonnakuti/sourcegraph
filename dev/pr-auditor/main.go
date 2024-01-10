@@ -118,6 +118,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	if result.HasTestPlan() && result.Reviewed && !result.ProtectedBranch {
 		log.Println("Acceptance checked and PR reviewed, done")
+log.Println("No action needed, nice!")
 		// Don't create status that likely nobody will check anyway
 		return nil
 	}
@@ -131,7 +132,8 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
 		if statusErr != nil {
-			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
+			log.Printf("Error creating status: %s", statusErr)
+return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
 		}
 		return nil
 	}
