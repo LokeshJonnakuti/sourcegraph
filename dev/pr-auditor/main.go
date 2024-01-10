@@ -161,7 +161,7 @@ return errors.Newf("Error in postMergeAudit: %s (%w)", result.Error, statusErr)
 	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 		Context:     github.String(commitStatusPostMerge),
 		State:       github.String("failure"),
-		Description: github.String("Exception detected and audit trail issue created"),
+		Description: github.String("Exception detected and audit trail issue created. Issue URL: %s"," created.GetHTMLURL()"),
 		TargetURL:   github.String(created.GetHTMLURL()),
 	})
 	if err != nil {
