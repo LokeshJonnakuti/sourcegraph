@@ -8,7 +8,7 @@ import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
 import { asError, logger } from '@sourcegraph/common'
 import { Button, Code, Text } from '@sourcegraph/wildcard'
 
-import { isChunkLoadError } from '../monitoring'
+import { isChunkLoadError, isRouteErrorResponse } from '../monitoring'
 
 import { HeroPage } from './HeroPage'
 
@@ -62,6 +62,14 @@ export class ErrorBoundary extends React.PureComponent<React.PropsWithChildren<P
                 Sentry.captureException(error)
             })
         }
+        if (typeof Sentry !== 'undefined') {
+            Sentry.withScope(scope => {
+                for (const [key, value] of Object.entries(errorInfo)) {
+                    scope.setExtra(key, value)
+                }
+                Sentry.captureException(error)
+            })
+        }
     }
 
     public componentDidUpdate(previousProps: Props): void {
@@ -74,7 +82,7 @@ export class ErrorBoundary extends React.PureComponent<React.PropsWithChildren<P
     }
 
     public render(): React.ReactNode | null {
-        if (this.state.error !== undefined) {
+        if (this.state.error !== undefined || this.props.render) {
             return (
                 <ErrorBoundaryMessage
                     error={this.state.error}
