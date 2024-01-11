@@ -8,7 +8,7 @@ import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
 import { asError, logger } from '@sourcegraph/common'
 import { Button, Code, Text } from '@sourcegraph/wildcard'
 
-import { isChunkLoadError } from '../monitoring'
+import { isChunkLoadError, isRouteErrorResponse } from '../monitoring'
 
 import { HeroPage } from './HeroPage'
 
