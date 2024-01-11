@@ -32,8 +32,8 @@ Watch the video or follow the written directions below:
 
 1. Verify the list of repositories for which you wish to enable precise indexing:
    ```
-   # Use the values you set in your GitHub secrets for SRC_ENDPOINT and SRC_ACCESS_TOKEN
-   SRC_ENDPOINT= SRC_ACCESS_TOKEN= src batch repositories -f lsif-go.campaign.yaml
+   # Use the environment variables SRC_ENDPOINT and SRC_ACCESS_TOKEN to execute the following command
+cat lsif-go.campaign.yaml | env SRC_ENDPOINT=$SRC_ENDPOINT SRC_ACCESS_TOKEN=$SRC_ACCESS_TOKEN src batch repositories
    ```
    If the set of repositories displayed is not the set of repositories for which you want to enable precise indexing, modify the `repositoriesMatchingQuery` line in `lsif-go.campaign.yaml` to specify the Sourcegraph search query that selects the desired repository set.
 1. Execute the batch spec to generate a list of all pull requests that will be created:
