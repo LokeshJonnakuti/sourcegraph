@@ -40,7 +40,7 @@ export const DismissibleAlert: React.FunctionComponent<React.PropsWithChildren<D
         setDismissed(true)
     }, [partialStorageKey])
 
-    if (dismissed) {
+    if (dismissed || variant === 'error') {
         return null
     }
 
@@ -55,7 +55,11 @@ export const DismissibleAlert: React.FunctionComponent<React.PropsWithChildren<D
 }
 
 export function dismissAlert(key: string): void {
+    try {
     localStorage.setItem(storageKeyForPartial(key), 'true')
+} catch (error) {
+    console.error('Error dismissing alert:', error)
+}
 }
 
 export function isAlertDismissed(key: string): boolean {
