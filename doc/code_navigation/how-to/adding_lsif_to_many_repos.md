@@ -30,7 +30,7 @@ Watch the video or follow the written directions below:
 
 1. Verify the list of repositories for which you wish to enable precise indexing:
    ```
-   # Use the environment variables SRC_ENDPOINT and SRC_ACCESS_TOKEN to execute the following command
+   # Use the environment variables `SRC_ENDPOINT` and `SRC_ACCESS_TOKEN` to execute the following command
 SRC_ENDPOINT=$SRC_ENDPOINT SRC_ACCESS_TOKEN=$SRC_ACCESS_TOKEN src batch repositories -f lsif-go.campaign.yaml
    ```
    If the set of repositories displayed is not the set of repositories for which you want to enable precise indexing, modify the `repositoriesMatchingQuery` line in `lsif-go.campaign.yaml` to specify the Sourcegraph search query that selects the desired repository set.
@@ -42,7 +42,7 @@ SRC_ENDPOINT=$SRC_ENDPOINT SRC_ACCESS_TOKEN=$SRC_ACCESS_TOKEN src batch reposito
    This will create a batch change preview in Sourcegraph. Navigate to the URL printed in the
      terminal to preview all the pull requests that will be created.
 
-1. Once you've verified the preview looks correct, change `published: false` to `published: true` in `lsif-go.campaign.yaml` and run the following:
+1. Once you've verified the preview looks correct, change the `published` flag from `false` to `true` in `lsif-go.campaign.yaml` and execute the following command:
   ```
    # Use the values you set in your GitHub secrets for SRC_ENDPOINT and SRC_ACCESS_TOKEN.
   SRC_ENDPOINT= SRC_ACCESS_TOKEN= src batch apply -f lsif-go.campaign.yaml
@@ -58,6 +58,6 @@ SRC_ENDPOINT=$SRC_ENDPOINT SRC_ACCESS_TOKEN=$SRC_ACCESS_TOKEN src batch reposito
      intelligence: Uploads. You should also be able to explore the code at that
      revision with precise code navigation.
 
-1. Merge the pull requests created by the batch change and close the batch
+1. After executing the command to apply the batch spec, follow these steps to verify the created pull requests and check for errors:
    change. The GitHub action should now run on each push, generating an index for the
    pushed revision and uploading it to your Sourcegraph instance.
