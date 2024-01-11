@@ -40,7 +40,7 @@ export const DismissibleAlert: React.FunctionComponent<React.PropsWithChildren<D
         setDismissed(true)
     }, [partialStorageKey])
 
-    if (dismissed) {
+    if (dismissed || variant === 'error') {
         return null
     }
 
