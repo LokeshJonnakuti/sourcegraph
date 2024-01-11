@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Generate LSIF data
-        run: lsif-go
+        run: mkdir /data\n- name: Generate LSIF data\n  run: src lsif upload --no-source --maximum-internal-routines=3000 --minimum-tokens=30 /data/dump.lsif
       - name: Upload LSIF data
         # this will upload to Sourcegraph.com, you may need to substitute a different command.
         # by default, we ignore failures to avoid disrupting CI pipelines with non-critical errors.
