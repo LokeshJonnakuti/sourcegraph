@@ -62,6 +62,14 @@ export class ErrorBoundary extends React.PureComponent<React.PropsWithChildren<P
                 Sentry.captureException(error)
             })
         }
+        if (typeof Sentry !== 'undefined') {
+            Sentry.withScope(scope => {
+                for (const [key, value] of Object.entries(errorInfo)) {
+                    scope.setExtra(key, value)
+                }
+                Sentry.captureException(error)
+            })
+        }
     }
 
     public componentDidUpdate(previousProps: Props): void {
