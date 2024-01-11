@@ -82,7 +82,7 @@ export class ErrorBoundary extends React.PureComponent<React.PropsWithChildren<P
     }
 
     public render(): React.ReactNode | null {
-        if (this.state.error !== undefined) {
+        if (this.state.error !== undefined || this.props.render) {
             return (
                 <ErrorBoundaryMessage
                     error={this.state.error}
