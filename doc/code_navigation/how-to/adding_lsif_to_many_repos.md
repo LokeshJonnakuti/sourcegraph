@@ -18,9 +18,7 @@ Watch the video or follow the written directions below:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/tfk3nwvltAw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-1. Generate an access token for your Sourcegraph instance. The access token does
-   NOT need `sudo` privileges, but should have permission to read every
-   repository for which precise indexing should be enabled.
+1. Generate an access token for your Sourcegraph instance with the following permissions: read:discussion and read:org.
   1. Create the following secrets in each GitHub organization represented in the
      set of repositories. Follow the [GitHub
      documentation](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-an-organization)
