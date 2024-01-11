@@ -28,9 +28,7 @@ Watch the video or follow the written directions below:
         to access Sourcegraph.
      1. `srcAccessToken`: the Sourcegraph access token you just created.
 
-1. Download
-   [`lsif-go.campaign.yaml`](https://raw.githubusercontent.com/sourcegraph/snippets/main/lsif/lsif-go.campaign.yaml)
-   to your local machine.
+1. [Download lsif-go.campaign.yaml](https://raw.githubusercontent.com/sourcegraph/snippets/main/lsif/lsif-go.campaign.yaml) to your local machine.
 
 1. Verify the list of repositories for which you wish to enable precise indexing:
    ```
