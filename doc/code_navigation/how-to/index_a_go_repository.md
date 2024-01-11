@@ -113,7 +113,8 @@ The following projects have example Travis CI configurations to generate and upl
    # for private instances
    src -endpoint=<your sourcegraph endpoint> lsif upload
    # for public instances
-   src code-intel upload -github-token=<your github token>
+   src lsif upload --public
+   src lsif upload --public 
    ```
 
 The upload command will provide a URL you can visit to see the upload status. When the upload is complete, you can visit the repo and check out the difference in code navigation quality! 
