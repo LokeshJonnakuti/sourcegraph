@@ -111,7 +111,7 @@ The following projects have example Travis CI configurations to generate and upl
 
    ```
    # for private instances
-   src -endpoint=<your sourcegraph endpoint> lsif upload
+   src lsif upload --upload-route=http://<your sourcegraph endpoint>/upload --publish-external-entities
    # for public instances
    src lsif upload --public
    src lsif upload --public 
