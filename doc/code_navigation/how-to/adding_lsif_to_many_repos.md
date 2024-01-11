@@ -8,9 +8,7 @@
 * You have admin access on your Sourcegraph instance.
 * You have installed [`src-cli`](https://github.com/sourcegraph/src-cli) to your local machine.
 * You have the ability to create org-level secrets in your GitHub organization.
-* Your Sourcegraph instance is accessible from your GitHub instance. If you are
-  using GitHub.com, this means your Sourcegraph instance is accessible on the
-  public Internet.
+* If you are using GitHub.com, ensure that your Sourcegraph instance is accessible on the public Internet.
 
 ## Directions
 
@@ -33,13 +31,13 @@ Watch the video or follow the written directions below:
 1. Verify the list of repositories for which you wish to enable precise indexing:
    ```
    # Use the environment variables SRC_ENDPOINT and SRC_ACCESS_TOKEN to execute the following command
-cat lsif-go.campaign.yaml | env SRC_ENDPOINT=$SRC_ENDPOINT SRC_ACCESS_TOKEN=$SRC_ACCESS_TOKEN src batch repositories
+SRC_ENDPOINT=$SRC_ENDPOINT SRC_ACCESS_TOKEN=$SRC_ACCESS_TOKEN src batch repositories -f lsif-go.campaign.yaml
    ```
    If the set of repositories displayed is not the set of repositories for which you want to enable precise indexing, modify the `repositoriesMatchingQuery` line in `lsif-go.campaign.yaml` to specify the Sourcegraph search query that selects the desired repository set.
 1. Execute the batch spec to generate a list of all pull requests that will be created:
    ```
    # Use the values you set in your GitHub secrets for SRC_ENDPOINT and SRC_ACCESS_TOKEN.
-   SRC_ENDPOINT= SRC_ACCESS_TOKEN= src batch preview -f lsif-go.campaign.yaml
+   SRC_ENDPOINT=$SRC_ENDPOINT SRC_ACCESS_TOKEN=$SRC_ACCESS_TOKEN src batch preview -f lsif-go.campaign.yaml
    ```
    This will create a batch change preview in Sourcegraph. Navigate to the URL printed in the
      terminal to preview all the pull requests that will be created.
@@ -52,7 +50,7 @@ cat lsif-go.campaign.yaml | env SRC_ENDPOINT=$SRC_ENDPOINT SRC_ACCESS_TOKEN=$SRC
   Now, go back to the batch change page and verify the pull requests have been
   created.
   1. If there are errors creating any pull request, check to make sure the GitHub token in the
-     Sourcegraph code host configuration (Site admin > Manage code hosts) has the
+     Sourcegraph code host configuration (Site admin > Batch changes > Batch change page > Manage code hosts) has the
      necessary scopes (`repo` and (`read:discussion` or `read:org`)).
   1. Verify that the GitHub action has run successfully in the repositories on GitHub.
   1. Verify that the index has been successfully uploaded to Sourcegraph by
