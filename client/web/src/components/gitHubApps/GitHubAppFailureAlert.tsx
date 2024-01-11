@@ -2,7 +2,7 @@ import React from 'react'
 
 import { H4, Text } from '@sourcegraph/wildcard'
 
-import { DismissibleAlert } from '../DismissibleAlert'
+import { DismissibleAlert } from '@sourcegraph/DismissibleAlert'
 
 export const GitHubAppFailureAlert: React.FunctionComponent<React.PropsWithChildren<{ error: string }>> = ({
     error,
