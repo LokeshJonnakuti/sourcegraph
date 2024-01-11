@@ -27,7 +27,7 @@ jobs:
       - name: Upload LSIF data
         # this will upload to Sourcegraph.com, you may need to substitute a different command.
         # by default, we ignore failures to avoid disrupting CI pipelines with non-critical errors.
-        run: src code-intel upload -github-token=${{ secrets.GITHUB_TOKEN }} -ignore-upload-failure
+        run: src lsif upload --commit=${{ github.SHA }} --repo=${{ github.repository }} --root=.
 ```
 
 The following projects have example GitHub Actions workflows to generate and upload LSIF indexes:
