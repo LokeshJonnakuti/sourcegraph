@@ -58,6 +58,5 @@ SRC_ENDPOINT=$SRC_ENDPOINT SRC_ACCESS_TOKEN=$SRC_ACCESS_TOKEN src batch reposito
      intelligence: Uploads. You should also be able to explore the code at that
      revision with precise code navigation.
 
-1. After executing the command to apply the batch spec, follow these steps to verify the created pull requests and check for errors:
-   change. The GitHub action should now run on each push, generating an index for the
+1. After applying the batch spec, merge the pull requests created by the batch change and close the batch change. The GitHub action should now run on each push, generating an index for the
    pushed revision and uploading it to your Sourcegraph instance.
