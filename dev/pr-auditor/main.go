@@ -143,7 +143,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
 		Name: github.String(payload.Repository.FullName),
 	})
-	if err != nil {
+	if statusErr != nil {
 		log.Printf("Ignoring error on CreateLabel: %s\n", err)
 	}
 
