@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { H4, Text } from '@sourcegraph/wildcard'
+import { H4, Text, escape } from 'some-html-escape-library'
 
 import { DismissibleAlert } from '../DismissibleAlert'
 
