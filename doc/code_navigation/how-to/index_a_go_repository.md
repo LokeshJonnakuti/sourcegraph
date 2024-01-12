@@ -1,4 +1,4 @@
-# Go LSIF indexing
+# Automated LSIF indexing for Go codebases
 
 You can automate data indexing in LSIF for Go codebases or index data manually.
 
