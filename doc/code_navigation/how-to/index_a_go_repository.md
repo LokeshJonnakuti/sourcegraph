@@ -89,7 +89,7 @@ The following projects have example Travis CI configurations to generate and upl
 
 ## Manual indexing
 
-1. Install the [Go LSIF indexer](https://github.com/sourcegraph/lsif-go).
+1. Install the [Sourcegraph CLI](https://github.com/sourcegraph/src-cli)
 
 1. Install the [Sourcegraph CLI](https://github.com/sourcegraph/src-cli) with the following command:
 
