@@ -107,7 +107,7 @@ func main() {
 }
 
 const (
-	commitStatusPostMerge = "pr-auditor / post-merge"
+	commitStatusPostMerge = "pr-auditor / post-merge (audit)"
 	commitStatusPreMerge  = "pr-auditor / pre-merge"
 )
 
@@ -127,7 +127,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
-			Context:     github.String(commitStatusPostMerge),
+			Context:     github.String("pr-auditor / post-merge (audit)"),
 			State:       github.String("error"),
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
 			TargetURL:   github.String(flags.GitHubRunURL),
@@ -198,7 +198,7 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	_, _, err := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
-		Context:     github.String(commitStatusPreMerge),
+		Context:     github.String("pr-auditor / pre-merge"),
 		State:       github.String(prState),
 		Description: github.String(stateDescription),
 		TargetURL:   github.String(stateURL),
