@@ -111,7 +111,7 @@ The following projects have example Travis CI configurations to generate and upl
 
    ```
    # for private instances
-   src -endpoint=<your sourcegraph endpoint> lsif upload
+   src code-intel upload -github-token=<your github token>
    # for public instances
    src code-intel upload -github-token=<your github token>
    ```
