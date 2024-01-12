@@ -54,7 +54,7 @@ Many steps in Sourcegraph's Buildkite pipelines allow for [soft failures](https:
 
 In the Buildkite UI, soft failures currently look like the following, with a _triangular_ warning sign (not to be mistaken for a hard failure!):
 
-![soft fail in Buildkite UI](https://user-images.githubusercontent.com/23356519/150558751-d8e0da19-0b6f-4645-aa12-7547d375330f.png)
+![soft fail in Buildkite UI]![soft fail in Buildkite UI](https://user-images.githubusercontent.com/23356519/150558751-d8e0da19-0b6f-4645-aa12-7547d375330f.png)
 
 We use soft failures for the following reasons only:
 
