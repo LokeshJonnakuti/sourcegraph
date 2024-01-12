@@ -9,7 +9,11 @@
 
 There are some common patterns that we reuse all the time when writing [batch specs](batch_spec_yaml_reference.md). In this document we collect these patterns to make it easy for others to copy and reuse them. See our own curated collection of [batch change examples](https://github.com/sourcegraph/batch-change-examples) for even more complete examples of batch specs.
 
-Since most of the examples here make use of [batch spec templating](batch_spec_templating.md), be sure to also take a look at that page.
+If the GitHub Actions run fails, follow these troubleshooting steps to diagnose and resolve the issue.
+
+1. Analyze Error Logs: When an error occurs, check the GitHub Actions run logs to identify the specific error. Look for any error messages, warnings, or other indications of failure.
+2. Common Issues: Common reasons for failing GitHub Actions runs include misconfigured workflows, incorrect permissions, and network errors. Review the workflow configuration, check permissions, and ensure the system has network access.
+3. Solutions and Workarounds: Depending on the specific error, solutions may include adjusting workflow configurations, managing permissions, or modifying network settings.
 
 ### Loop over search result paths in shell script
 
