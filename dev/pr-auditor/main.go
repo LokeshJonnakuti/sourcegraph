@@ -69,13 +69,15 @@ func main() {
 	case "main", "master", "release":
 		log.Printf("performing checks against allow-listed pull request base %q", ref)
 	case flags.ProtectedBranch:
-		if flags.ProtectedBranch == "" {
+		if ref == flags.ProtectedBranch {
 			log.Printf("unknown pull request base %q - discarding\n", ref)
 			return
 		}
 
 		log.Printf("performing checks against protected pull request base %q", ref)
-	default:
+		case "specific_error":
+		log.Printf("handling specific error condition: %s - discarding\n", result.Error)
+		return
 		log.Printf("unknown pull request base %q - discarding\n", ref)
 		return
 	}
@@ -105,7 +107,7 @@ func main() {
 }
 
 const (
-	commitStatusPostMerge = "pr-auditor / post-merge"
+	commitStatusPostMerge = "pr-auditor / post-merge (audit)"
 	commitStatusPreMerge  = "pr-auditor / pre-merge"
 )
 
@@ -125,7 +127,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
-			Context:     github.String(commitStatusPostMerge),
+			Context:     github.String("pr-auditor / post-merge (audit)"),
 			State:       github.String("error"),
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
 			TargetURL:   github.String(flags.GitHubRunURL),
@@ -140,7 +142,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
 	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
-		Name: github.String(payload.Repository.FullName),
+		Name: github.String(flags.IssuesRepoName),
 	})
 	if err != nil {
 		log.Printf("Ignoring error on CreateLabel: %s\n", err)
@@ -196,7 +198,7 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	_, _, err := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
-		Context:     github.String(commitStatusPreMerge),
+		Context:     github.String("pr-auditor / pre-merge"),
 		State:       github.String(prState),
 		Description: github.String(stateDescription),
 		TargetURL:   github.String(stateURL),
