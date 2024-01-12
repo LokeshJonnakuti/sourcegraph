@@ -33,7 +33,7 @@ Pipeline steps are generated on the fly using the [pipeline generator](https://s
 To see what checks will get run against your current branch, use [`sg`](../../setup/quickstart.md):
 
 ```sh
-sg ci preview
+sg ci preview -b <branch_name>
 ```
 
 You can also request builds manually for your builds using `sg ci build`. You'll find below a summary video about some useful `sg ci *` commands, to learn how move fast when interacting with the CI:
