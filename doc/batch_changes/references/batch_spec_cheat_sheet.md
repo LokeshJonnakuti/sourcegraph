@@ -1,4 +1,4 @@
-# Batch spec cheat sheet
+# Batch spec cheat sheet for Sourcegraph
 
 <style>
 .markdown-body h2 { margin-top: 50px; }

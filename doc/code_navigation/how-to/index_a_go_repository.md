@@ -1,4 +1,4 @@
-# Go LSIF indexing
+# Automated LSIF indexing for Go codebases
 
 You can automate data indexing in LSIF for Go codebases or index data manually.
 
@@ -89,7 +89,7 @@ The following projects have example Travis CI configurations to generate and upl
 
 ## Manual indexing
 
-1. Install the [Go LSIF indexer](https://github.com/sourcegraph/lsif-go).
+1. Install the [Sourcegraph CLI](https://github.com/sourcegraph/src-cli)
 
 1. Install the [Sourcegraph CLI](https://github.com/sourcegraph/src-cli) with the following command:
 
@@ -111,7 +111,7 @@ The following projects have example Travis CI configurations to generate and upl
 
    ```
    # for private instances
-   src -endpoint=<your sourcegraph endpoint> lsif upload
+   src code-intel upload -github-token=<your github token>
    # for public instances
    src code-intel upload -github-token=<your github token>
    ```

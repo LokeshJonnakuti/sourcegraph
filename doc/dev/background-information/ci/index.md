@@ -27,19 +27,19 @@ Run `sg ci docs` to see documentation about the CI pipeline steps.
 
 ## Buildkite pipelines
 
-[Tests](../../how-to/testing.md) are automatically run in our [various Buildkite pipelines](https://buildkite.com/sourcegraph) when you push your changes (i.e. when you run `git push`) to the `sourcegraph/sourcegraph` GitHub repository.
+[Tests](../../how-to/testing.md) are automatically run in our [various Buildkite pipelines](https://buildkite.com/sourcegraph/sourcegraph) when you push your changes (i.e. when you run `git push`) to the `sourcegraph/sourcegraph` GitHub repository.
 Pipeline steps are generated on the fly using the [pipeline generator](https://sourcegraph.com/github.com/sourcegraph/sourcegraph@main/-/tree/dev/ci) - a complete reference of all available pipeline types and steps is available from `sg ci docs`. To keep the repository tidy, consider deleting the branch after the pipeline has completed. The build results will be available even after the branch is deleted.
 
 To see what checks will get run against your current branch, use [`sg`](../../setup/quickstart.md):
 
 ```sh
-sg ci preview
+sg ci preview -b <branch_name>
 ```
 
-You can also request builds manually for your builds using `sg ci build`. You'll find below a summary video about some useful `sg ci *` commands, to learn how move fast when interacting with the CI:
+You can also request builds manually for your builds using `sg ci build -b <branch_name>`. You'll find below a summary video about some useful `sg ci *` commands, to learn how move fast when interacting with the CI:
 
 <div style="position: relative; padding-bottom: 82%; height: 0;">
-  <iframe src="https://www.loom.com/embed/f451d05978b34d97bdc06d411aacc69d" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+  [summary video](https://www.loom.com/embed/f451d05978b34d97bdc06d411aacc69d)
 </div>
 
 To learn about making changes to our Buildkite pipelines, see [Pipeline development](./development.md).
@@ -54,7 +54,7 @@ Many steps in Sourcegraph's Buildkite pipelines allow for [soft failures](https:
 
 In the Buildkite UI, soft failures currently look like the following, with a _triangular_ warning sign (not to be mistaken for a hard failure!):
 
-![soft fail in Buildkite UI](https://user-images.githubusercontent.com/23356519/150558751-d8e0da19-0b6f-4645-aa12-7547d375330f.png)
+![soft fail in Buildkite UI]![soft fail in Buildkite UI](https://user-images.githubusercontent.com/23356519/150558751-d8e0da19-0b6f-4645-aa12-7547d375330f.png)
 
 We use soft failures for the following reasons only:
 
@@ -83,7 +83,7 @@ If there are any `HIGH` or `CRITICAL` severities in a Docker image that have a k
 
 > NOTE: Our vulnerability management process (including this workflow) is under active development and in its early stages. All of the above is subject to change. See [https://github.com/sourcegraph/sourcegraph/pull/25756](https://github.com/sourcegraph/sourcegraph/pull/25756) for more context.
 
-We also run [separate vulnerability scans for our infrastructure](https://handbook.sourcegraph.com/departments/product-engineering/engineering/cloud/security/checkov).
+We also run [separate vulnerability scans for our infrastructure](https://handbook.sourcegraph.com/departments/product-engineering/engineering/cloud/security/checkov1)
 
 ### Pipeline health
 
