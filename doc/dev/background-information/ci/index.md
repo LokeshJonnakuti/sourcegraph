@@ -190,15 +190,19 @@ If you want to be explictly notified (through a Slack ping) when your pull reque
 
 ## GitHub Actions
 
-### `buildchecker`
+### `buildchecker
+  description: Check and verify the build process.
+  description: Check and verify the build process.`
 
-[![buildchecker](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml) [![buildchecker-history](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker-history.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker-history.yml)
+[![buildchecker](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml) [![buildchecker-history
+  description: Run historical build checks.](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker-history.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker-history.yml)
 
 [`buildchecker`](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml), our [branch lock management tool](#branch-locks), runs in GitHub actions—see the [workflow specification](https://github.com/sourcegraph/sourcegraph/blob/main/.github/workflows/buildchecker.yml).
 
 To learn more about `buildchecker`, refer to the [`buildchecker` source code and documentation](https://github.com/sourcegraph/sourcegraph/tree/main/dev/buildchecker).
 
-### `pr-auditor`
+### `pr-auditor
+  description: Check pull requests for compliance.`
 
 [![pr-auditor](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml)
 
