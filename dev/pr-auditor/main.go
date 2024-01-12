@@ -75,7 +75,9 @@ func main() {
 		}
 
 		log.Printf("performing checks against protected pull request base %q", ref)
-	default:
+		case "specific_error":
+		log.Printf("handling specific error condition: %s - discarding\n", result.Error)
+		return
 		log.Printf("unknown pull request base %q - discarding\n", ref)
 		return
 	}
