@@ -39,7 +39,7 @@ sg ci preview -b <branch_name>
 You can also request builds manually for your builds using `sg ci build -b <branch_name>`. You'll find below a summary video about some useful `sg ci *` commands, to learn how move fast when interacting with the CI:
 
 <div style="position: relative; padding-bottom: 82%; height: 0;">
-  <iframe src="https://www.loom.com/embed/f451d05978b34d97bdc06d411aacc69d" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+  [summary video](https://www.loom.com/embed/f451d05978b34d97bdc06d411aacc69d)
 </div>
 
 To learn about making changes to our Buildkite pipelines, see [Pipeline development](./development.md).
