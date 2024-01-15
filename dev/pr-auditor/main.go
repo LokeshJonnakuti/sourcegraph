@@ -53,13 +53,13 @@ func main() {
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
 	if err != nil {
-		log.Fatal("ReadFile: ", err)
+		log.Fatalf{"Failed to read file: %v", err}
 	}
 	var payload *EventPayload
 	if err := json.Unmarshal(payloadData, &payload); err != nil {
-		log.Fatal("Unmarshal: ", err)
+		log.Fatalf{"Failed to unmarshal payload: %v", err}
 	}
-	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
+	log.Printf("handling event for pull request %s, payload: %+v\nPayload data: %s\n", payload.PullRequest.URL, payload.Dump(), string(payloadData))
 
 	// Discard unwanted events
 	switch ref := payload.PullRequest.Base.Ref; ref {
@@ -67,14 +67,14 @@ func main() {
 	// as to require usage to provide the default branch - we can just rely on a simple
 	// allowlist of commonly used default branches.
 	case "main", "master", "release":
-		log.Printf("performing checks against allow-listed pull request base %q", ref)
+		log.Printf("performing checks against allow-listed pull request base %q - %s", ref, "valid base branch")
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
-			log.Printf("unknown pull request base %q - discarding\n", ref)
+			log.Printf("unknown pull request base %q - %s\n", ref, "discarding")
 			return
 		}
 
-		log.Printf("performing checks against protected pull request base %q", ref)
+		log.Printf("performing checks against protected pull request base %q - %s", ref, "protected base branch")
 	default:
 		log.Printf("unknown pull request base %q - discarding\n", ref)
 		return
@@ -84,7 +84,7 @@ func main() {
 		return
 	}
 	if payload.Action == "closed" && !payload.PullRequest.Merged {
-		log.Println("ignoring closure of un-merged pull request")
+		log.Printf("ignoring closure of un-merged pull request: %s", payload.PullRequest.URL)
 		return
 	}
 	if payload.Action == "edited" && payload.PullRequest.Merged {
