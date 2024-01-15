@@ -13,17 +13,9 @@ Since most of the examples here make use of [batch spec templating](batch_spec_t
 
 ### Loop over search result paths in shell script
 
-```yaml
-on:
-  - repositoriesMatchingQuery: OLD-VALUE
-
+```
 steps:
-  - run: |
-      for file in "${{ join repository.search_result_paths " " }}";
-      do
-        sed -i 's/OLD-VALUE/NEW-VALUE/g;' ${file}
-      done
-    container: alpine:3
+  - run: echo "Hello, World!"
 ```
 
 ### Put search result paths in file and loop over them
