@@ -35,8 +35,8 @@ func (f *Flags) Parse() {
 	flag.StringVar(&f.GitHubPayloadPath, "github.payload-path", "", "path to JSON file with GitHub event payload")
 	flag.StringVar(&f.GitHubToken, "github.token", "", "GitHub token")
 	flag.StringVar(&f.GitHubRunURL, "github.run-url", "", "URL to GitHub actions run")
-	flag.StringVar(&f.IssuesRepoOwner, "issues.repo-owner", "sourcegraph", "owner of repo to create issues in")
-	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "name of repo to create issues in")
+	flag.StringVar(&f.IssuesRepoOwner, "issues.repo-owner", "", "owner of repo to create issues in")
+	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "", "name of repo to create issues in")
 	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "name of branch that if set as the base branch in a PR, will always open an exception")
 	flag.StringVar(&f.AdditionalContext, "additional-context", "", "additional information that will be appended to the recorded exception, if any.")
 	flag.Parse()
@@ -52,12 +52,19 @@ func main() {
 	)))
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
+	// Add additional logging statements for debugging
+	log.Printf("Payload data: %s\n", payloadData)
+	log.Printf("Parsed payload: %+v\n", payload)
 	if err != nil {
 		log.Fatal("ReadFile: ", err)
 	}
 	var payload *EventPayload
-	if err := json.Unmarshal(payloadData, &payload); err != nil {
-		log.Fatal("Unmarshal: ", err)
+	payload, err := unmarshalEventPayload(payloadData)
+if err != nil {
+	logErrorAndFatal(err)
+}
+if err != nil {
+		logErrorAndFatal(err)
 	}
 	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
 
@@ -130,8 +137,8 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
-		if statusErr != nil {
-			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
+		if errCreate != nil {
+			logErrorAndFatal(errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr))
 		}
 		return nil
 	}
@@ -139,7 +146,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
 
 	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
-	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
+	_, _, issueCreated, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, &github.Label{
 		Name: github.String(payload.Repository.FullName),
 	})
 	if err != nil {
@@ -147,7 +154,8 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	}
 
 	log.Printf("Creating issue for exception: %+v\n", issue)
-	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
+	log.Printf("Error during issue creation: %+v\n", err)
+	issueCreated, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
 	if err != nil {
 		// Let run fail, don't include special status
 		return errors.Newf("Issues.Create: %w", err)
@@ -162,11 +170,15 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		Description: github.String("Exception detected and audit trail issue created"),
 		TargetURL:   github.String(created.GetHTMLURL()),
 	})
-	if err != nil {
+	if errCreate != nil {
 		return errors.Newf("CreateStatus: %w", err)
 	}
 
-	return nil
+	logErrorAndFatal(errCreate)
+	return errors.Newf("CreateStatus: %w", errCreate)
+	if errCreate != nil {
+		logErrorAndFatal(err)
+	}
 }
 
 func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
