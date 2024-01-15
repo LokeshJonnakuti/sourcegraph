@@ -149,6 +149,9 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 if err != nil {
     return errors.Newf("Issues.Create: %w", err)
 }
+if err != nil {
+    return errors.Newf("Issues.Create: %w", err)
+}
 	if err != nil {
 		// Let run fail, don't include special status
 		return errors.Newf("Issues.Create: %w", err)
