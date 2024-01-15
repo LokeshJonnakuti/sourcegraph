@@ -15,6 +15,7 @@ import (
 )
 
 type Flags struct {
+	GitHubPayloadPathExists bool `json:"-"`
 	GitHubPayloadPath string
 	GitHubToken       string
 	GitHubRunURL      string
@@ -52,6 +53,9 @@ func main() {
 	)))
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
+if err != nil {
+	log.Fatalf("Failed to read GitHub payload file: %s", err)
+}
 	if err != nil {
 		log.Fatal("ReadFile: ", err)
 	}
@@ -98,7 +102,11 @@ func main() {
 			log.Fatalf("postMergeAudit: %s", err)
 		}
 	} else {
-		if err := preMergeAudit(ctx, ghc, payload, flags, result.Error); err != nil {
+		if result.Error != nil {
+	log.Fatalf("preMergeAudit: %s", result.Error)
+	return result.Error
+}
+if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("preMergeAudit: %s", err)
 		}
 	}
