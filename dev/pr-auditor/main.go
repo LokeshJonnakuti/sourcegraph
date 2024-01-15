@@ -173,11 +173,21 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 }
 
 func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
-	result := checkPR(ctx, ghc, payload, checkOpts{
+	preMergeAuditErr := result.Error
+if preMergeAuditErr != nil {
+		logError(preMergeAuditErr)
+		return errors.Newf("checkPR: %w", preMergeAuditErr)
+	}
+result := checkPR(ctx, ghc, payload, checkOpts{
 		ValidateReviews: false, // only validate reviews on post-merge
 		ProtectedBranch: flags.ProtectedBranch,
 	})
-	log.Printf("checkPR: %+v\n", result)
+	preMergeAuditErr := result.Error
+if preMergeAuditErr != nil {
+		logError(preMergeAuditErr)
+		return errors.Newf("checkPR: %w", preMergeAuditErr)
+	}
+log.Printf("checkPR: %+v\n", result)
 
 	var prState, stateDescription string
 	stateURL := flags.GitHubRunURL
