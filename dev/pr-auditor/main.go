@@ -17,7 +17,7 @@ import (
 type Flags struct {
 	GitHubPayloadPathExists bool `json:"-"`
 	GitHubPayloadPath string
-	GitHubToken       string
+	GitHubToken       *http.Client
 	GitHubRunURL      string
 
 	IssuesRepoOwner string
