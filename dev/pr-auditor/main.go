@@ -52,7 +52,8 @@ func main() {
 	)))
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
-	if err != nil {
+	err = handleAndReturnError(err)
+if err != nil {
 		log.Fatal("ReadFile: ", err)
 	}
 	var payload *EventPayload
@@ -94,7 +95,9 @@ func main() {
 
 	// Do checks
 	if payload.PullRequest.Merged {
-		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
+		e := postMergeAudit(ctx, ghc, payload, flags)
+if e != nil {
+ logError(e)
 			log.Fatalf("postMergeAudit: %s", err)
 		}
 	} else {
@@ -131,7 +134,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
 		if statusErr != nil {
-			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
+			logError(fmt.Errorf("error creating status: %s, while handling %s", statusErr, result.Error))
 		}
 		return nil
 	}
@@ -150,7 +153,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
 	if err != nil {
 		// Let run fail, don't include special status
-		return errors.Newf("Issues.Create: %w", err)
+		logError(err)
 	}
 
 	log.Println("Created issue: ", created.GetHTMLURL())
@@ -170,11 +173,21 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 }
 
 func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
-	result := checkPR(ctx, ghc, payload, checkOpts{
+	preMergeAuditErr := result.Error
+if preMergeAuditErr != nil {
+		logError(preMergeAuditErr)
+		return errors.Newf("checkPR: %w", preMergeAuditErr)
+	}
+result := checkPR(ctx, ghc, payload, checkOpts{
 		ValidateReviews: false, // only validate reviews on post-merge
 		ProtectedBranch: flags.ProtectedBranch,
 	})
-	log.Printf("checkPR: %+v\n", result)
+	preMergeAuditErr := result.Error
+if preMergeAuditErr != nil {
+		logError(preMergeAuditErr)
+		return errors.Newf("checkPR: %w", preMergeAuditErr)
+	}
+log.Printf("checkPR: %+v\n", result)
 
 	var prState, stateDescription string
 	stateURL := flags.GitHubRunURL
