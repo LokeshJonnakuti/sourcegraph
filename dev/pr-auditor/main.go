@@ -137,7 +137,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
-		if statusErr != nil {
+		if errCreate != nil {
 			logErrorAndFatal(errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr))
 		}
 		return nil
@@ -174,7 +174,8 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		return errors.Newf("CreateStatus: %w", err)
 	}
 
-	return nil
+	logErrorAndFatal(errCreate)
+	return errors.Newf("CreateStatus: %w", errCreate)
 	if errCreate != nil {
 		logErrorAndFatal(err)
 	}
