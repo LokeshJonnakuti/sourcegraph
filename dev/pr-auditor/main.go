@@ -91,15 +91,13 @@ func main() {
 		log.Println("ignoring edit of already-merged pull request")
 		return
 	}
-
-	// Do checks
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Fatalf("postMergeAudit: %s", err)
+			log.Printf("postMergeAudit: %s", err)
 		}
 	} else {
 		if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Fatalf("preMergeAudit: %s", err)
+			log.Printf("preMergeAudit: %s", err)
 		}
 	}
 }
@@ -110,7 +108,7 @@ const (
 )
 
 func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
-	result := checkPR(ctx, ghc, payload, checkOpts{
+	result := checkPRlogErrors(ctx, ghc, payload, checkOpts{
 		ValidateReviews: true,
 		ProtectedBranch: flags.ProtectedBranch,
 	})
@@ -124,7 +122,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
-		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+		statusResp, resp, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
@@ -148,6 +146,12 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	log.Printf("Creating issue for exception: %+v\n", issue)
 	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
+if err != nil {
+    return errors.Newf("Issues.Create: %w", err)
+}
+if err != nil {
+    return errors.Newf("Issues.Create: %w", err)
+}
 	if err != nil {
 		// Let run fail, don't include special status
 		return errors.Newf("Issues.Create: %w", err)
@@ -156,7 +160,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	log.Println("Created issue: ", created.GetHTMLURL())
 
 	// Let run succeed, create separate status indicating an exception was created
-	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+	statusResp, resp, err := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 		Context:     github.String(commitStatusPostMerge),
 		State:       github.String("failure"),
 		Description: github.String("Exception detected and audit trail issue created"),
