@@ -73,7 +73,19 @@ func main() {
 	}
 
 	// Do checks
-	if payload.PullRequest.Merged {
+	    if payload.PullRequest.Draft {
+        log.Println("skipping event on draft PR")
+        return
+    }
+    if payload.Action == "closed" && !payload.PullRequest.Merged {
+        log.Println("ignoring closure of un-merged pull request")
+        return
+    }
+    if payload.Action == "edited" && payload.PullRequest.Merged {
+        log.Println("ignoring edit of already-merged pull request")
+        return
+    }
+    if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
 		}
