@@ -47,6 +47,10 @@ Examples:
 
 ### Optional scip-typescript flags
 
+- `--infer-tsconfig`: If you are indexing a JavaScript project instead of TypeScript, add this flag to infer the TypeScript configuration.
+- `--yarn-workspaces`: If you are indexing a project using Yarn workspaces, add this flag to specify that the project is using Yarn workspaces.
+- `--pnpm-workspaces`: If you are indexing a project using Pnpm workspaces, add this flag to specify that the project is using Pnpm workspaces.
+
 The exact `scip-typescript` invocation will vary based on your configuration. For example:
 
 - If you are indexing a JavaScript project instead of TypeScript, add the `--infer-tsconfig` flag.
