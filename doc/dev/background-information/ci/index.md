@@ -206,6 +206,17 @@ To learn more about `buildchecker`, refer to the [`buildchecker` source code and
 
 To learn more about `pr-auditor`, refer to the [`pr-auditor` source code and documentation](https://github.com/sourcegraph/sourcegraph/tree/main/dev/pr-auditor).
 
+### Troubleshooting GitHub Actions failures
+
+When encountering a GitHub Actions failure, follow these troubleshooting steps to identify and address the issues:
+1. **Analyzing Error Logs**: Start by analyzing the error logs to identify specific errors and their root causes.
+2. **Identifying Specific Errors**: Look for error messages, stack traces, and any other detailed information that can help pinpoint the cause of the failure.
+3. **Modifying the Workflow**: Make the necessary modifications to the GitHub Actions workflow file based on the identified errors.
+
+For detailed instructions on each step, refer to the [GitHub Actions documentation](https://docs.github.com/en/actions).
+
+In addition, you can refer to the workflows and action files in the `.github/workflows` directory for specific workflow configurations. For example, see the `.github/workflows/buildchecker.yml` and `.github/workflows/pr-auditor.yml` files to understand the configuration of the `buildchecker` and `pr-auditor` workflows respectively.
+
 ### Third-party licenses
 
 [![Licenses Update](https://github.com/sourcegraph/sourcegraph/actions/workflows/licenses-update.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/licenses-update.yml) [![Licenses Check](https://github.com/sourcegraph/sourcegraph/actions/workflows/licenses-check.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/licenses-check.yml)
