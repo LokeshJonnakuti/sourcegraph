@@ -52,7 +52,8 @@ func main() {
 	)))
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
-	if err != nil {
+	err = handleAndReturnError(err)
+if err != nil {
 		log.Fatal("ReadFile: ", err)
 	}
 	var payload *EventPayload
@@ -94,7 +95,9 @@ func main() {
 
 	// Do checks
 	if payload.PullRequest.Merged {
-		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
+		e := postMergeAudit(ctx, ghc, payload, flags)
+if e != nil {
+ logError(e)
 			log.Fatalf("postMergeAudit: %s", err)
 		}
 	} else {
