@@ -56,8 +56,9 @@ func main() {
 		log.Fatal("ReadFile: ", err)
 	}
 	var payload *EventPayload
-	if err := json.Unmarshal(payloadData, &payload); err != nil {
-		log.Fatal("Unmarshal: ", err)
+	payload, err := unmarshalEventPayload(payloadData)
+if err != nil {
+		logErrorAndFatal(err)
 	}
 	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
 
@@ -131,7 +132,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
 		if statusErr != nil {
-			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
+			logErrorAndFatal(errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr))
 		}
 		return nil
 	}
