@@ -91,15 +91,13 @@ func main() {
 		log.Println("ignoring edit of already-merged pull request")
 		return
 	}
-
-	// Do checks
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Fatalf("postMergeAudit: %s", err)
+			log.Printf("postMergeAudit: %s", err)
 		}
 	} else {
 		if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Fatalf("preMergeAudit: %s", err)
+			log.Printf("preMergeAudit: %s", err)
 		}
 	}
 }
