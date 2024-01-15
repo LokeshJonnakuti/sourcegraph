@@ -95,6 +95,7 @@ func main() {
 	// Do checks
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
+    log.Printf("Error in post-merge audit: %s", err)
 			log.Fatalf("postMergeAudit: %s", err)
 		}
 	} else {
@@ -124,6 +125,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
+    log.Printf("Error in checkPR: %s", result.Error)
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
