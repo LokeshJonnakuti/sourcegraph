@@ -52,6 +52,9 @@ func main() {
 	)))
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
+	// Add additional logging statements for debugging
+	log.Printf("Payload data: %s\n", payloadData)
+	log.Printf("Parsed payload: %+v\n", payload)
 	if err != nil {
 		log.Fatal("ReadFile: ", err)
 	}
