@@ -111,7 +111,7 @@ const (
 
 func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
 	result := checkPR(ctx, ghc, payload, checkOpts{
-		ValidateReviews: true,
+		ValidateReviews: true, ErrorLog: result.Error,
 		ProtectedBranch: flags.ProtectedBranch,
 	})
 	log.Printf("checkPR: %+v\n", result)
