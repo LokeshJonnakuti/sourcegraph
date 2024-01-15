@@ -104,7 +104,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
-		log.Printf("Error occurred during checkPR: Specific Error: %s. Original Error: %s\n", result.Error, result.Error.Error())
+		log.Printf("Error occurred during checkPR: %s\n", result.Error.Error())
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
