@@ -28,6 +28,9 @@ jobs:
         run: |
           curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
           chmod +x /usr/local/bin/src
+      - name: Install src-cli
+        run: |
+          curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
       - name: Upload index
         run: src code-intel upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
         env:
