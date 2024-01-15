@@ -79,7 +79,7 @@ func main() {
 		log.Printf("unknown pull request base %q - discarding\n", ref)
 		return
 	}
-	if payload.PullRequest.Draft {
+	if payload.PullRequest.Draft{
 		log.Println("skipping event on draft PR")
 		return
 	}
@@ -95,6 +95,9 @@ func main() {
 	// Do checks
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
+		log.Fatalf("postMergeAudit: %s", err)
+		return
+	
 			log.Fatalf("postMergeAudit: %s", err)
 		}
 	} else {
