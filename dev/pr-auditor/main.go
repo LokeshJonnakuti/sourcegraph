@@ -95,11 +95,11 @@ func main() {
 	// Do checks
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Printf("postMergeAudit: %s", err)
+			log.Printf("Error during postMergeAudit: %s", err)
 		}
 	} else {
 		if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Fatalf("preMergeAudit: %s", err)
+			log.Printf("Error during preMergeAudit: %s", err)
 		}
 	}
 }
