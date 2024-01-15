@@ -79,6 +79,10 @@ jobs:
     if: github.repository == '<insert your repo name>'
     runs-on: ubuntu-latest
     container: sourcegraph/scip-typescript:latest
+      - name: Install scip-typescript
+        run: npm install -g @sourcegraph/scip-typescript
+      - name: Generate index
+        run: scip-typescript index
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
@@ -87,6 +91,8 @@ jobs:
         run: scip-typescript index
       - name: Upload index
         run: src code-intel upload -github-token=${{ secrets.GITHUB_TOKEN }} -no-progress
+        env:
+          SRC_ENDPOINT: https://sourcegraph.com/
         env:
           SRC_ENDPOINT: https://sourcegraph.com/
 ```
