@@ -1,34 +1,14 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"flag"
-	"fmt"
 	"log"
-	"os"
-
-	"github.com/sourcegraph/sourcegraph/lib/errors"
-
-	"github.com/google/go-github/v55/github"
-	"golang.org/x/oauth2"
 )
 
-type Flags struct {
-	GitHubPayloadPath string
-	GitHubToken       string
-	GitHubRunURL      string
+...
 
-	IssuesRepoOwner string
-	IssuesRepoName  string
-
-	// ProtectedBranch designates a branch name that should always record an exception when a PR is opened
-	// against it. It's primary use case is to discourage PRs againt the release branch on sourcegraph/deploy-sourcegraph-cloud.
-	ProtectedBranch string
-
-	// AdditionalContext contains a paragraph that will be appended at the end of the created exception. It enables
-	// repositories to further explain why an exception has been recorded.
-	AdditionalContext string
+payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
+if err != nil {
+	log.Fatal("ReadFile: ", err)
 }
 
 func (f *Flags) Parse() {
@@ -66,7 +46,7 @@ func main() {
 	// This is purely an API call usage optimization, so we don't need to be so specific
 	// as to require usage to provide the default branch - we can just rely on a simple
 	// allowlist of commonly used default branches.
-	case "main", "master", "release":
+	case "main", "master", "release", "develop", "feature", "bugfix":
 		log.Printf("performing checks against allow-listed pull request base %q", ref)
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
@@ -93,7 +73,19 @@ func main() {
 	}
 
 	// Do checks
-	if payload.PullRequest.Merged {
+	    if payload.PullRequest.Draft {
+        log.Println("skipping event on draft PR")
+        return
+    }
+    if payload.Action == "closed" && !payload.PullRequest.Merged {
+        log.Println("ignoring closure of un-merged pull request")
+        return
+    }
+    if payload.Action == "edited" && payload.PullRequest.Merged {
+        log.Println("ignoring edit of already-merged pull request")
+        return
+    }
+    if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
 		}
@@ -124,6 +116,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
+		log.Printf("Error occurred during checkPR: %s\n", result.Error.Error())
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
@@ -131,10 +124,46 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
 		if statusErr != nil {
+			log.Printf("Error occurred during CreateStatus: %s\n", statusErr.Error())
 			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
 		}
 		return nil
 	}
+
+	issue := generateDetailedExceptionIssue(payload, &result, flags.AdditionalContext, result.Error.Error())
+
+	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
+	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
+		Name: github.String(payload.Repository.FullName),
+	})
+	if err != nil {
+		log.Printf("Ignoring error on CreateLabel: %s\n", err)
+	}
+
+	log.Printf("Creating issue for exception: %+v\n", issue)
+	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
+	if err != nil {
+		log.Printf("Error occurred during Issues.Create: Specific Error: %s\n", err.Error())
+		// Let run fail, don't include special status
+		return errors.Newf("Issues.Create: %w", err)
+	}
+
+	log.Println("Created issue: ", created.GetHTMLURL())
+
+	// Let run succeed, create separate status indicating an exception was created
+	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+		Context:     github.String(commitStatusPostMerge),
+		State:       github.String("failure"),
+		Description: github.String("Exception detected and audit trail issue created"),
+		TargetURL:   github.String(created.GetHTMLURL()),
+	})
+	if err != nil {
+		log.Printf("Error occurred during CreateStatus: Specific Error: %s\n", err.Error())
+		return errors.Newf("CreateStatus: %w", err)
+	}
+
+	return nil
+}
 
 	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
 
