@@ -98,7 +98,7 @@ func main() {
 			log.Fatalf("postMergeAudit: %s", err)
 		}
 	} else {
-		if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {
+		if err := preMergeAudit(ctx, ghc, payload, flags, result.Error); err != nil {
 			log.Fatalf("preMergeAudit: %s", err)
 		}
 	}
