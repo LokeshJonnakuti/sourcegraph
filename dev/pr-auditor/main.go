@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/sourcegraph/sourcegraph/lib/errors"
@@ -109,7 +109,13 @@ func main() {
 		return
 	}
 
-	// Do checks
+	if payload.Action == "edited" 
+	&& payload.PullRequest.Merged {
+	log.Println("ignoring edit of already-merged pull request")
+	return
+}
+
+// Do checks
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
