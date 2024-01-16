@@ -106,8 +106,8 @@ func main() {
 }
 
 const (
-	commitStatusPostMerge = "pr-auditor / post-merge"
-	commitStatusPreMerge  = "pr-auditor / pre-merge"
+	commitStatusPostMerge = "pr-auditor / post-merge / completed"
+	commitStatusPreMerge  = "pr-auditor / pre-merge / completed"
 )
 
 func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
