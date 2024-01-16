@@ -1,16 +1,19 @@
 package main
 
 import (
+	"github.com/sourcegraph/sourcegraph/eventpayload"
+
+"your-package-path"
 	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/sourcegraph/sourcegraph/lib/errors"
 
-	"github.com/google/go-github/v55/github"
+	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 )
 
@@ -39,6 +42,10 @@ func (f *Flags) Parse() {
 	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "name of repo to create issues in")
 	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "name of branch that if set as the base branch in a PR, will always open an exception")
 	flag.StringVar(&f.AdditionalContext, "additional-context", "", "additional information that will be appended to the recorded exception, if any.")
+	flag.StringVar(&f.IssuesRepoOwner, "issues.repo-owner", "sourcegraph", "owner of repo to create issues in")
+	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "name of repo to create issues in")
+	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "name of branch that if set as the base branch in a PR, will always open an exception")
+	flag.StringVar(&f.AdditionalContext, "additional-context", "", "additional information that will be appended to the recorded exception, if any.")
 	flag.Parse()
 }
 
@@ -62,6 +69,16 @@ func main() {
 	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
 
 	// Discard unwanted events
+	if payload.PullRequest.Draft {
+		log.Println("skipping event on draft PR")
+		return
+	}
+	
+	if payload.Action == "closed" && !payload.PullRequest.Merged {
+		log.Println("ignoring closure of un-merged pull request")
+		return
+	}
+
 	switch ref := payload.PullRequest.Base.Ref; ref {
 	// This is purely an API call usage optimization, so we don't need to be so specific
 	// as to require usage to provide the default branch - we can just rely on a simple
@@ -92,13 +109,19 @@ func main() {
 		return
 	}
 
-	// Do checks
+	if payload.Action == "edited" 
+	&& payload.PullRequest.Merged {
+	log.Println("ignoring edit of already-merged pull request")
+	return
+}
+
+// Do checks
 	if payload.PullRequest.Merged {
-		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
+		if err := triggerPostMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
 		}
 	} else {
-		if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {
+		if err := triggerPreMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("preMergeAudit: %s", err)
 		}
 	}
@@ -109,7 +132,7 @@ const (
 	commitStatusPreMerge  = "pr-auditor / pre-merge"
 )
 
-func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
+func triggerPostMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
 	result := checkPR(ctx, ghc, payload, checkOpts{
 		ValidateReviews: true,
 		ProtectedBranch: flags.ProtectedBranch,
@@ -118,6 +141,11 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	if result.HasTestPlan() && result.Reviewed && !result.ProtectedBranch {
 		log.Println("Acceptance checked and PR reviewed, done")
+		// Don't create status that likely nobody will check anyway
+		return nil
+	}
+
+	owner, repo := payload.Repository.GetOwnerAndName()
 		// Don't create status that likely nobody will check anyway
 		return nil
 	}
@@ -169,7 +197,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	return nil
 }
 
-func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
+func triggerPreMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
 	result := checkPR(ctx, ghc, payload, checkOpts{
 		ValidateReviews: false, // only validate reviews on post-merge
 		ProtectedBranch: flags.ProtectedBranch,
