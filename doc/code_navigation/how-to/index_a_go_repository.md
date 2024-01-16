@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     container: sourcegraph/lsif-go:latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Generate LSIF data
         run: lsif-go
       - name: Upload LSIF data
@@ -107,7 +107,14 @@ The following projects have example Travis CI configurations to generate and upl
    lsif-go # generates a file named dump.lsif
    ```
 
-1. Upload the data to a Sourcegraph instance with:
+1. To troubleshoot common issues related to Go LSIF indexing, consider the following steps:
+- Ensure that the lsif-go indexer is compatible with the version of Go used in your project.
+- Check for any build errors or warnings related to the lsif-go indexing process.
+- Verify that the lsif-go indexer has the necessary permissions to access the files and directories in the project.
+
+If you encounter issues during the indexing process, refer to the lsif-go documentation or community forums for further assistance.
+
+After troubleshooting, you can upload the data to a Sourcegraph instance with:
 
    ```
    # for private instances
