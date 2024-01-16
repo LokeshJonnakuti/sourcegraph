@@ -65,6 +65,11 @@ func main() {
 	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
 
 	// Discard unwanted events
+	if payload.PullRequest.Draft {
+		log.Println("skipping event on draft PR")
+		return
+	}
+
 	switch ref := payload.PullRequest.Base.Ref; ref {
 	// This is purely an API call usage optimization, so we don't need to be so specific
 	// as to require usage to provide the default branch - we can just rely on a simple
