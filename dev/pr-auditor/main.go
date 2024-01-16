@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+ 
+	"os"
 
 	"github.com/sourcegraph/sourcegraph/lib/errors"
 
@@ -53,11 +55,11 @@ func main() {
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
 	if err != nil {
-		log.Fatal("ReadFile: ", err)
+		log.Fatalf("Error reading file: %s", err)
 	}
 	var payload *EventPayload
 	if err := json.Unmarshal(payloadData, &payload); err != nil {
-		log.Fatal("Unmarshal: ", err)
+		log.Fatalf("Error unmarshalling JSON payload: %s", err)
 	}
 	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
 
@@ -70,13 +72,13 @@ func main() {
 		log.Printf("performing checks against allow-listed pull request base %q", ref)
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
-			log.Printf("unknown pull request base %q - discarding\n", ref)
+			log.Printf("Unknown pull request base %q - discarding\n", ref)
 			return
 		}
 
 		log.Printf("performing checks against protected pull request base %q", ref)
 	default:
-		log.Printf("unknown pull request base %q - discarding\n", ref)
+		log.Printf("Unknown pull request base %q - discarding\n", ref)
 		return
 	}
 	if payload.PullRequest.Draft {
@@ -95,11 +97,11 @@ func main() {
 	// Do checks
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Fatalf("postMergeAudit: %s", err)
+			log.Printf("Error in postMergeAudit: %s", err)
 		}
 	} else {
 		if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Fatalf("preMergeAudit: %s", err)
+			log.Printf("Error in preMergeAudit: %s", err)
 		}
 	}
 }
