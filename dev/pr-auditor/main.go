@@ -61,12 +61,12 @@ func main() {
 	}
 	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
 
-	// Discard unwanted events
+	// Ignore unwanted events
 	switch ref := payload.PullRequest.Base.Ref; ref {
 	// Handle different cases based on the pull request base branch
 	// as to require usage to provide the default branch - we can just rely on a simple
 	// allowlist of commonly used default branches.
-	case "main","master","release":
+	case "main", "master", "release":
 		log.Printf("performing checks against allow-listed pull request base %q", ref)
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
@@ -82,15 +82,15 @@ func main() {
 		return
 	}
 	if payload.PullRequest.Draft {
-		log.Println("skipping event on draft PR")
+		log.Println("ignoring event: draft PR")
 		return
 	}
 	if payload.Action == "closed" && !payload.PullRequest.Merged {
-		log.Println("ignoring closure of un-merged pull request")
+		log.Println("event ignored: closure of un-merged pull request")
 		return
 	}
 	if payload.Action == "edited" && payload.PullRequest.Merged {
-		log.Println("ignoring edit of already-merged pull request")
+		log.Println("event ignored: edit of already-merged pull request")
 		return
 	}
 
