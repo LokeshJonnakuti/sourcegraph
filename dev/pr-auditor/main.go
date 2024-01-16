@@ -70,7 +70,7 @@ func main() {
 		log.Printf("performing checks against allow-listed pull request base %q", ref)
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
-			log.Printf("unknown pull request base %q - discarding\n", ref)
+			log.Printf("unknown pull request base %q - discarding, error: %s\n", ref, err)
 			return
 		}
 
