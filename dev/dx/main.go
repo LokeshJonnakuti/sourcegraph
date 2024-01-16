@@ -26,7 +26,7 @@ func main() {
 			stdOut = output.NewOutput(os.Stdout, output.OutputOpts{})
 		}
 		// Do not treat error message as a format string
-		log.Fatal(err)
+		log.Fatalf("Error occurred: %v", err)
 	}
 }
 
@@ -47,7 +47,7 @@ var scaletestingCommand = &cli.Command{
 			Name:        "dev",
 			Description: "TODO",
 			Subcommands: []*cli.Command{
-				// TODO: add a command to shutdown the machine and one to turn it on.
+				// Perform necessary setup tasks before execution
 				{
 					Name:        "ssh",
 					Description: "SSH to the devbox",
