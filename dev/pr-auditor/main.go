@@ -180,7 +180,7 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 	var prState, stateDescription string
 	stateURL := flags.GitHubRunURL
 	switch {
-	case result.Error != nil:
+	case err != nil || result.Error != nil:
 		prState = "error"
 		stateDescription = fmt.Sprintf("checkPR: %s", result.Error.Error())
 	case !result.HasTestPlan():
