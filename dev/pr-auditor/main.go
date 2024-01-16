@@ -61,9 +61,9 @@ func main() {
 	}
 	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
 
-	// Discard unwanted events
+	// Ignore unwanted events
 	switch ref := payload.PullRequest.Base.Ref; ref {
-	// This is purely an API call usage optimization, so we don't need to be so specific
+	// Handle different cases based on the pull request base branch
 	// as to require usage to provide the default branch - we can just rely on a simple
 	// allowlist of commonly used default branches.
 	case "main", "master", "release":
@@ -78,21 +78,23 @@ func main() {
 	default:
 		log.Printf("unknown pull request base %q - discarding\n", ref)
 		return
+		log.Printf("unknown pull request base %q - discarding\n", ref)
+		return
 	}
 	if payload.PullRequest.Draft {
-		log.Println("skipping event on draft PR")
+		log.Println("ignoring event: draft PR")
 		return
 	}
 	if payload.Action == "closed" && !payload.PullRequest.Merged {
-		log.Println("ignoring closure of un-merged pull request")
+		log.Println("event ignored: closure of un-merged pull request")
 		return
 	}
 	if payload.Action == "edited" && payload.PullRequest.Merged {
-		log.Println("ignoring edit of already-merged pull request")
+		log.Println("event ignored: edit of already-merged pull request")
 		return
 	}
 
-	// Do checks
+	// Add custom checks based on the requirements of the `pr-auditor` tool
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
@@ -130,8 +132,8 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
-		if statusErr != nil {
-			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
+		if statusError != nil {
+			return errors.Newf("result.Error != nil (%w), statusError: %w", result.Error, statusErr)
 		}
 		return nil
 	}
@@ -149,7 +151,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	log.Printf("Creating issue for exception: %+v\n", issue)
 	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
 	if err != nil {
-		// Let run fail, don't include special status
+		// Run should fail, exclude special status
 		return errors.Newf("Issues.Create: %w", err)
 	}
 
