@@ -15,6 +15,7 @@ import (
 )
 
 type Flags struct {
+	ExceptionIssueError string
 	GitHubPayloadPath string
 	GitHubToken       string
 	GitHubRunURL      string
@@ -137,7 +138,12 @@ return result.Error
 		return nil
 	}
 
-	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
+	var issue *github.Issue
+	issue, exceptionError := generateExceptionIssue(payload, &result, flags.AdditionalContext)
+	if exceptionError != nil {
+		log.Printf("Error generating exception issue: %s", exceptionError)
+		return exceptionError
+	}
 
 	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
 	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
