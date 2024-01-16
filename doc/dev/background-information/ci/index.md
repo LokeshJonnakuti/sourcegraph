@@ -32,6 +32,18 @@ Pipeline steps are generated on the fly using the [pipeline generator](https://s
 
 To see what checks will get run against your current branch, use [`sg`](../../setup/quickstart.md):
 
+## Troubleshooting Tips
+
+### Analyzing CI Failures
+
+If the CI pipeline fails, follow these troubleshooting tips to identify the root cause:
+
+1. Check the error logs to capture the failure details.
+2. Look for information on the specific step that caused the failure.
+3. Use the pipeline generator to understand the sequence of steps and identify the failed step.
+4. Review the Buildkite UI for any soft failures or hard failures.
+5. Investigate any flaky tests or steps that may have caused the failure.
+
 ```sh
 sg ci preview
 ```
