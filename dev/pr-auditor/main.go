@@ -133,7 +133,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
 		if statusErr != nil {
-			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
+			return errors.Newf("result.Error != nil (%w), statusError: %w", result.Error, statusErr)
 		}
 		return nil
 	}
