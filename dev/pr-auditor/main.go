@@ -120,7 +120,18 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	if result.HasTestPlan() && result.Reviewed && !result.ProtectedBranch {
 		log.Println("Acceptance checked and PR reviewed, done")
 		// Don't create status that likely nobody will check anyway
-		return nil
+		err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, 
+	&github.RepoStatus{
+		Context:     github.String(commitStatusPostMerge),
+		State:       github.String("success"),
+		Description: github.String("Exception detected and audit trail issue created"),
+		TargetURL:   github.String(created.GetHTMLURL()),
+	})
+if err != nil {
+	return errors.Newf("error creating status: %w", err)
+}
+
+return nil
 	}
 
 	owner, repo := payload.Repository.GetOwnerAndName()
