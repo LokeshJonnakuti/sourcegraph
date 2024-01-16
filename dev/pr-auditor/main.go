@@ -53,7 +53,10 @@ func main() {
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
 	if err != nil {
-		log.Fatal("ReadFile: ", err)
+		if err != nil {
+	log.Printf("ReadFile error: %s", err)
+	return
+}
 	}
 	var payload *EventPayload
 	if err := json.Unmarshal(payloadData, &payload); err != nil {
@@ -67,7 +70,10 @@ func main() {
 	// as to require usage to provide the default branch - we can just rely on a simple
 	// allowlist of commonly used default branches.
 	case "main", "master", "release":
-		log.Printf("performing checks against allow-listed pull request base %q", ref)
+		if ref != "main" && ref != "master" && ref != "release" {
+	log.Printf("Performing checks against unrecognized pull request base: %q", ref)
+	return
+}
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
 			log.Printf("unknown pull request base %q - discarding\n", ref)
@@ -95,7 +101,7 @@ func main() {
 	// Do checks
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Fatalf("postMergeAudit: %s", err)
+			log.Printf("Error in postMergeAudit: %s", err)
 		}
 	} else {
 		if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {

@@ -1,0 +1,45 @@
+The updated contents of the ".github/workflows/main.yml" file:
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Format code
+        run: npm run format
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build code
+        run: npm run build
+
+      - name: Deploy to production
+        uses: some-action-for-deployment@v1
+        with:
+          environment: production
+          api-key: ${{ secrets.API_KEY }}
