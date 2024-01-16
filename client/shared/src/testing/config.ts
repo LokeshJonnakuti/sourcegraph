@@ -95,11 +95,16 @@ const configFields: ConfigFields = {
         description:
             'Cilent secret of the GitHub app to use to authenticate to Sourcegraph. Follow these instructions to obtain: https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/',
     },
-    gitHubDotComToken: {
+        gitHubDotComToken: {
+        envVar: 'GH_TOKEN',
+        description: 'A Github personal token with access to private repos used for e2e tests.',
+    
         envVar: 'GH_TOKEN',
         description: 'A Github personal token with access to private repos used for e2e tests.',
     },
     gitHubToken: {
+    description:
+        'A GitHub personal access token that will be used to authenticate a GitHub external service. It does not need to have any scopes.', 
         envVar: 'GITHUB_TOKEN',
         description:
             'A GitHub personal access token that will be used to authenticate a GitHub external service. It does not need to have any scopes.',
