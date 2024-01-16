@@ -123,14 +123,14 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	}
 
 	owner, repo := payload.Repository.GetOwnerAndName()
-	if result.Error != nil {
+	if result.Error != nil || result.Reviewed {
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
-		if statusErr != nil {
+		if statusErr != nil || issue == nil {
 			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
 		}
 		return nil
@@ -142,7 +142,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
 		Name: github.String(payload.Repository.FullName),
 	})
-	if err != nil {
+	if err != nil || created == nil {
 		log.Printf("Ignoring error on CreateLabel: %s\n", err)
 	}
 
@@ -150,7 +150,8 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
 	if err != nil {
 		// Let run fail, don't include special status
-		return errors.Newf("Issues.Create: %w", err)
+		log.Printf("Ignoring error on Issues.Create: %s
+", err)
 	}
 
 	log.Println("Created issue: ", created.GetHTMLURL())
@@ -158,7 +159,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	// Let run succeed, create separate status indicating an exception was created
 	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 		Context:     github.String(commitStatusPostMerge),
-		State:       github.String("failure"),
+		State:       github.String("error"),
 		Description: github.String("Exception detected and audit trail issue created"),
 		TargetURL:   github.String(created.GetHTMLURL()),
 	})
@@ -179,7 +180,7 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 	var prState, stateDescription string
 	stateURL := flags.GitHubRunURL
 	switch {
-	case result.Error != nil:
+	case err != nil || result.Error != nil:
 		prState = "error"
 		stateDescription = fmt.Sprintf("checkPR: %s", result.Error.Error())
 	case !result.HasTestPlan():
