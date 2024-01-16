@@ -150,7 +150,8 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
 	if err != nil {
 		// Let run fail, don't include special status
-		return errors.Newf("Issues.Create: %w", err)
+		log.Printf("Ignoring error on Issues.Create: %s
+", err)
 	}
 
 	log.Println("Created issue: ", created.GetHTMLURL())
@@ -158,7 +159,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	// Let run succeed, create separate status indicating an exception was created
 	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 		Context:     github.String(commitStatusPostMerge),
-		State:       github.String("failure"),
+		State:       github.String("error"),
 		Description: github.String("Exception detected and audit trail issue created"),
 		TargetURL:   github.String(created.GetHTMLURL()),
 	})
