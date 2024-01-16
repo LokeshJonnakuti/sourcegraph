@@ -32,14 +32,14 @@ type Flags struct {
 }
 
 func (f *Flags) Parse() {
-	flag.StringVar(&f.GitHubPayloadPath, "github.payload-path", "", "path to JSON file with GitHub event payload")
-	flag.StringVar(&f.GitHubToken, "github.token", "", "GitHub token")
-	flag.StringVar(&f.GitHubRunURL, "github.run-url", "", "URL to GitHub actions run")
-	flag.StringVar(&f.IssuesRepoOwner, "issues.repo-owner", "sourcegraph", "owner of repo to create issues in")
-	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "name of repo to create issues in")
-	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "name of branch that if set as the base branch in a PR, will always open an exception")
-	flag.StringVar(&f.AdditionalContext, "additional-context", "", "additional information that will be appended to the recorded exception, if any.")
-	flag.Parse()
+	flag.StringVar(&f.GitHubPayloadPath, "github.payload-path", "", "Path to the JSON file with the GitHub event payload")
+	flag.StringVar(&f.GitHubToken, "github.token", "", "GitHub token for authentication")
+	flag.StringVar(&f.GitHubRunURL, "github.run-url", "", "URL of the GitHub Actions run")
+	flag.StringVar(&f.IssuesRepoOwner, "issues.repo-owner", "sourcegraph", "Owner of the repository to create issues in")
+	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "Name of the repository to create issues in")
+	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "Name of the branch that, if set as the base branch in a pull request, will always open an exception")
+	flag.StringVar(&f.AdditionalContext, "additional-context", "", "Additional information that will be appended to the recorded exception, if any")
+	_ = flag.Parse()
 }
 
 func main() {
