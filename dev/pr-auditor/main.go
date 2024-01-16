@@ -123,14 +123,14 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	}
 
 	owner, repo := payload.Repository.GetOwnerAndName()
-	if result.Error != nil {
+	if result.Error != nil || result.Reviewed {
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
-		if statusErr != nil {
+		if statusErr != nil || issue == nil {
 			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
 		}
 		return nil
@@ -142,7 +142,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
 		Name: github.String(payload.Repository.FullName),
 	})
-	if err != nil {
+	if err != nil || created == nil {
 		log.Printf("Ignoring error on CreateLabel: %s\n", err)
 	}
 
