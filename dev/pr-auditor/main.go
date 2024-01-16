@@ -59,7 +59,8 @@ func main() {
 	if err := json.Unmarshal(payloadData, &payload); err != nil {
 		log.Fatal("Unmarshal: ", err)
 	}
-	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
+	log.Printf("Handling GitHub Actions event
+")
 
 	// Discard unwanted events
 	switch ref := payload.PullRequest.Base.Ref; ref {
@@ -174,7 +175,7 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 		ValidateReviews: false, // only validate reviews on post-merge
 		ProtectedBranch: flags.ProtectedBranch,
 	})
-	log.Printf("checkPR: %+v\n", result)
+	log.Printf("Pre-merge audit completed with result: %+v\n", result)
 
 	var prState, stateDescription string
 	stateURL := flags.GitHubRunURL
