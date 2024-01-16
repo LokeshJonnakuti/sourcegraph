@@ -42,6 +42,10 @@ func (f *Flags) Parse() {
 	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "name of repo to create issues in")
 	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "name of branch that if set as the base branch in a PR, will always open an exception")
 	flag.StringVar(&f.AdditionalContext, "additional-context", "", "additional information that will be appended to the recorded exception, if any.")
+	flag.StringVar(&f.IssuesRepoOwner, "issues.repo-owner", "sourcegraph", "owner of repo to create issues in")
+	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "name of repo to create issues in")
+	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "name of branch that if set as the base branch in a PR, will always open an exception")
+	flag.StringVar(&f.AdditionalContext, "additional-context", "", "additional information that will be appended to the recorded exception, if any.")
 	flag.Parse()
 }
 
@@ -67,6 +71,11 @@ func main() {
 	// Discard unwanted events
 	if payload.PullRequest.Draft {
 		log.Println("skipping event on draft PR")
+		return
+	}
+	
+	if payload.Action == "closed" && !payload.PullRequest.Merged {
+		log.Println("ignoring closure of un-merged pull request")
 		return
 	}
 
@@ -126,6 +135,11 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	if result.HasTestPlan() && result.Reviewed && !result.ProtectedBranch {
 		log.Println("Acceptance checked and PR reviewed, done")
+		// Don't create status that likely nobody will check anyway
+		return nil
+	}
+
+	owner, repo := payload.Repository.GetOwnerAndName()
 		// Don't create status that likely nobody will check anyway
 		return nil
 	}
