@@ -207,7 +207,9 @@ steps:
             - name: Generate LSIF data
               run: lsif-go
             - name: Upload LSIF data
-              run: src code-intel upload -github-token=${{ "\\${{secrets.GITHUB_TOKEN}}" }}
+              run: src code-intel upload -github-token=${{ secrets.GITHUB_TOKEN }}
+              env:
+                SRC_ENDPOINT: ${{ secrets.SRC_ENDPOINT }}
       EOF
 ```
 
@@ -224,5 +226,9 @@ changesetTemplate:
     This batch change modifies:
       ${{ range $index, $file := steps.modified_files }}
        - ${{ $file }}
+- Be sure to verify that the `SRC_ENDPOINT` environment variable is correctly set to the URL of the Sourcegraph instance.
+- Verify that the `secrets.GITHUB_TOKEN` is correctly passed as the `-github-token` argument in the `src code-intel upload` command.
+- Check that the `src code-intel upload` command is being executed correctly.
+- Ensure that you schedule periodic updates to keep the indexes up to date.
       ${{ end }}
 ```

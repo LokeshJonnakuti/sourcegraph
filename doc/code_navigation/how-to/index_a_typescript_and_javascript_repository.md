@@ -15,7 +15,7 @@ jobs:
   create-index-and-upload:
     # prevent forks of this repo from uploading lsif indexes
     if: github.repository == '<insert your repo name>'
-    runs-on: ubuntu-latest
+    name: Create and Upload Index
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
@@ -31,7 +31,7 @@ jobs:
       - name: Upload index
         run: src code-intel upload -github-token='${{ secrets.GITHUB_TOKEN }}' -no-progress
         env:
-          SRC_ENDPOINT: https://sourcegraph.com/
+          SRC_ENDPOINT: ${{ secrets.SRC_ENDPOINT }}
 ```
 
 > NOTE: `src-cli` ignores index upload failures by default to avoid disrupting CI pipelines with non-critical errors.
@@ -88,7 +88,7 @@ If you are indexing a JavaScript codebase or a project using Yarn workspaces, tw
 
 ## One-off indexing using scip-typescript locally
 
-Creating one-off indexes and uploading them is valuable as a proof of concept, but indexes are not kept up to date.
+Creating one-off indexes and uploading them is valuable as a proof of concept, but indexes are not kept up to date. Ensure that you schedule periodic updates to keep the indexes up to date.
 
 The steps here are similar to those in the previous GitHub Actions example.
 
