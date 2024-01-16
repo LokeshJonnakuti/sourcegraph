@@ -19,6 +19,19 @@ on:
 
 steps:
   - run: |
+      # Troubleshooting GitHub Actions runs
+      - name: Print GitHub context
+        run: echo "${{ toJson(github) }}"
+      - name: Print environment variables
+        run: printenv
+      - name: List files in current directory
+        run: ls -la
+      - name: Check file permissions
+        run: stat <file_path>
+      - name: Debug failing step
+        run: <command_to_debug>
+      - name: Retry step on failure
+        run: <command_to_retry>
       for file in "${{ join repository.search_result_paths " " }}";
       do
         sed -i 's/OLD-VALUE/NEW-VALUE/g;' ${file}
@@ -226,3 +239,7 @@ changesetTemplate:
        - ${{ $file }}
       ${{ end }}
 ```
+      - name: Debug failing step
+        run: <command_to_debug>
+      - name: Retry step on failure
+        run: <command_to_retry>
