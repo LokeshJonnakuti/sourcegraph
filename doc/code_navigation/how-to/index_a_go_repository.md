@@ -24,6 +24,11 @@ jobs:
       - uses: actions/checkout@v1
       - name: Generate LSIF data
         run: lsif-go
+      - name: Troubleshoot failing step
+        run: echo "Debugging failed step"
+      - name: Retry step on failure
+        run: <command_to_retry>
+
       - name: Upload LSIF data
         # this will upload to Sourcegraph.com, you may need to substitute a different command.
         # by default, we ignore failures to avoid disrupting CI pipelines with non-critical errors.
@@ -48,7 +53,12 @@ jobs:
     steps:
       - checkout
       - run: lsif-go
-        # this will upload to Sourcegraph.com, you may need to substitute a different command.
+        # Common Issues and Solutions:
+        - run: |
+              echo "Common Issues when indexing Go repositories using GitHub Actions"
+              echo "1. Ensure the lsif-go tool is installed and available in the PATH"
+              echo "2. Check the command used to generate LSIF data"
+              echo "3. Verify the upload command used to upload LSIF data"
         # by default, we ignore failures to avoid disrupting CI pipelines with non-critical errors.
       - run: src code-intel upload -github-token=<<parameters.github-token>> -ignore-upload-failure
 
