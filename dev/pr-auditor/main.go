@@ -8,13 +8,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/sourcegraph/sourcegraph/lib/errors"
+	"errors"
 
 	"github.com/google/go-github/v55/github"
 	"golang.org/x/oauth2"
 )
 
 type Flags struct {
+	ExceptionIssueError string
 	GitHubPayloadPath string
 	GitHubToken       string
 	GitHubRunURL      string
@@ -70,7 +71,7 @@ func main() {
 		log.Printf("performing checks against allow-listed pull request base %q", ref)
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
-			log.Printf("unknown pull request base %q - discarding\n", ref)
+			log.Printf("unknown pull request base %q - discarding, error: %s\n", ref, err)
 			return
 		}
 
@@ -110,7 +111,7 @@ const (
 )
 
 func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
-	result := checkPR(ctx, ghc, payload, checkOpts{
+	result := checkPRWithErrors(ctx, ghc, payload, checkOpts{
 		ValidateReviews: true,
 		ProtectedBranch: flags.ProtectedBranch,
 	})
@@ -123,7 +124,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	}
 
 	owner, repo := payload.Repository.GetOwnerAndName()
-	if result.Error != nil {
+	if result.Error != nil || errorIsSpecific(result.Error) {
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
@@ -131,12 +132,18 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
 		if statusErr != nil {
-			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
+			log.Printf("Error occurred: %s\n", result.Error)
+return result.Error
 		}
 		return nil
 	}
 
-	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
+	var issue *github.Issue
+	issue, exceptionError := generateExceptionIssue(payload, &result, flags.AdditionalContext)
+	if exceptionError != nil {
+		log.Printf("Error generating exception issue: %s", exceptionError)
+		return exceptionError
+	}
 
 	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
 	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
