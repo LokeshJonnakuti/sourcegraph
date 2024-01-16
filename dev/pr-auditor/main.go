@@ -66,7 +66,7 @@ func main() {
 	// This is purely an API call usage optimization, so we don't need to be so specific
 	// as to require usage to provide the default branch - we can just rely on a simple
 	// allowlist of commonly used default branches.
-	case "main", "master", "develop":
+	case "main", "master", "release":
 		log.Printf("performing checks against allow-listed pull request base %q", ref)
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
@@ -93,7 +93,7 @@ func main() {
 	}
 
 	// Do checks
-	if payload.PullRequest.Merged {
+	if !payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
 		}
