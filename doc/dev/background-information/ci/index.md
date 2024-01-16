@@ -48,13 +48,13 @@ If the CI pipeline fails, follow these troubleshooting tips to identify the root
 sg ci preview
 ```
 
-You can also request builds manually for your builds using `sg ci build`. You'll find below a summary video about some useful `sg ci *` commands, to learn how move fast when interacting with the CI:
+You can request manual builds for failed GitHub Actions runs using `sg ci build`. Additionally, you can monitor the build results and investigate any failures by following the steps below:
 
 <div style="position: relative; padding-bottom: 82%; height: 0;">
   <iframe src="https://www.loom.com/embed/f451d05978b34d97bdc06d411aacc69d" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
 </div>
 
-To learn about making changes to our Buildkite pipelines, see [Pipeline development](./development.md).
+To monitor the build results and investigate any failures, refer to the Buildkite UI and follow the steps outlined in the [Pipeline development](./development.md) documentation.
 
 ### Pipeline steps
 
