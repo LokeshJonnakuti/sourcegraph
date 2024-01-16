@@ -63,10 +63,10 @@ func main() {
 
 	// Discard unwanted events
 	switch ref := payload.PullRequest.Base.Ref; ref {
-	// This is purely an API call usage optimization, so we don't need to be so specific
+	// Handle different cases based on the pull request base branch
 	// as to require usage to provide the default branch - we can just rely on a simple
 	// allowlist of commonly used default branches.
-	case "main", "master", "release":
+	case "main","master","release":
 		log.Printf("performing checks against allow-listed pull request base %q", ref)
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
@@ -76,6 +76,8 @@ func main() {
 
 		log.Printf("performing checks against protected pull request base %q", ref)
 	default:
+		log.Printf("unknown pull request base %q - discarding\n", ref)
+		return
 		log.Printf("unknown pull request base %q - discarding\n", ref)
 		return
 	}
@@ -92,7 +94,7 @@ func main() {
 		return
 	}
 
-	// Do checks
+	// Perform additional checks based on the requirements of the `pr-auditor` tool
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
