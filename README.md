@@ -38,6 +38,34 @@
 
 ## Getting started
 
+### Running the code locally
+To run the code locally, follow these steps:
+1. Clone the repository.
+2. Install the necessary dependencies using `npm install` or a similar command.
+3. Set up any required environment variables or secrets by creating a `.env` file and populating it with the necessary values.
+4. Run the code using the command `npm start` or a similar command.
+
+### Running the code through GitHub Actions
+To run the code through GitHub Actions, follow these steps:
+1. Define the necessary environment variables or secrets in your GitHub repository settings.
+2. Ensure that the GitHub Actions workflow file (e.g., `.github/workflows/main.yml`) is set up correctly to trigger the code execution.
+3. Push changes to the repository to trigger the GitHub Actions workflow.
+
+### Purpose
+Provide a brief overview of the purpose of the code here.
+
+### Dependencies
+List any specific dependencies or tools required to run the code.
+
+### Specific Requirements
+Document any specific system requirements or configurations needed to run the code.
+
+### Setting up Environment Variables or Secrets
+Explain how to set up the necessary environment variables or secrets, including any example configuration or file formats.
+
+### Known Issues and Limitations
+Document any known issues or limitations of the code, and provide any workarounds if available.
+
 - [Use Sourcegraph on the cloud or self-hosted](https://docs.sourcegraph.com/)
 - [Sourcegraph.com public code search](https://sourcegraph.com/search)
 
