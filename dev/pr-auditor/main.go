@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/sourcegraph/sourcegraph/lib/errors"
+	"github.com/pkg/errors"
 
 	"github.com/google/go-github/v55/github"
 	"golang.org/x/oauth2"
