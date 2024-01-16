@@ -115,7 +115,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		ValidateReviews: true,
 		ProtectedBranch: flags.ProtectedBranch,
 	})
-	log.Printf("Post-merge audit completed with result: %+v\n", result)
+	log.Printf("Creating issue for exception\n")
 
 	if result.HasTestPlan() && result.Reviewed && !result.ProtectedBranch {
 		log.Println("Acceptance checked and PR reviewed, done")
