@@ -94,7 +94,7 @@ func main() {
 		return
 	}
 
-	// Perform additional checks based on the requirements of the `pr-auditor` tool
+	// Add custom checks based on the requirements of the `pr-auditor` tool
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
@@ -151,7 +151,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	log.Printf("Creating issue for exception: %+v\n", issue)
 	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
 	if err != nil {
-		// Let run fail, don't include special status
+		// Run should fail, exclude special status
 		return errors.Newf("Issues.Create: %w", err)
 	}
 
