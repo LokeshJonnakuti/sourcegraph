@@ -1,6 +1,9 @@
 package main
 
 import (
+	"github.com/sourcegraph/sourcegraph/eventpayload"
+
+"your-package-path"
 	"context"
 	"encoding/json"
 	"flag"
