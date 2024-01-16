@@ -151,7 +151,7 @@ return nil
 	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
 	if err != nil {
 		// Let run fail, don't include special status
-		return errors.Newf("Issues.Create: %w", err)
+		log.Println("Failed to create issue: ", err)
 	}
 
 	log.Println("Created issue: ", created.GetHTMLURL())
@@ -164,7 +164,7 @@ return nil
 		TargetURL:   github.String(created.GetHTMLURL()),
 	})
 	if err != nil {
-		return errors.Newf("CreateStatus: %w", err)
+		log.Println("Failed to create status: ", err)
 	}
 
 	return nil
