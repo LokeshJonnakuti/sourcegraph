@@ -55,7 +55,11 @@ func main() {
 	if err != nil {
 		log.Fatal("ReadFile: ", err)
 	}
-	var payload *EventPayload
+	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
+if err != nil {
+	log.Fatalf("Failed to read payload file: %s", err)
+}
+var payload *EventPayload
 	if err := json.Unmarshal(payloadData, &payload); err != nil {
 		log.Fatal("Unmarshal: ", err)
 	}
@@ -67,10 +71,10 @@ func main() {
 	// as to require usage to provide the default branch - we can just rely on a simple
 	// allowlist of commonly used default branches.
 	case "main", "master", "release":
-		log.Printf("performing checks against allow-listed pull request base %q", ref)
+		log.Printf("Performing checks against allow-listed pull request base %q", ref)
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
-			log.Printf("unknown pull request base %q - discarding\n", ref)
+			log.Printf("Unknown pull request base %q - discarding\n", ref)
 			return
 		}
 
@@ -153,7 +157,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		return errors.Newf("Issues.Create: %w", err)
 	}
 
-	log.Println("Created issue: ", created.GetHTMLURL())
+	log.Printf("Created issue: %s\n", created.GetHTMLURL())
 
 	// Let run succeed, create separate status indicating an exception was created
 	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
