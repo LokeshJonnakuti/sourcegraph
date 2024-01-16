@@ -13,7 +13,7 @@ import (
 
 	"github.com/sourcegraph/sourcegraph/lib/errors"
 
-	"github.com/google/go-github/v55/github"
+	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 )
 
@@ -117,11 +117,11 @@ func main() {
 
 // Do checks
 	if payload.PullRequest.Merged {
-		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
+		if err := triggerPostMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
 		}
 	} else {
-		if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {
+		if err := triggerPreMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("preMergeAudit: %s", err)
 		}
 	}
@@ -132,7 +132,7 @@ const (
 	commitStatusPreMerge  = "pr-auditor / pre-merge"
 )
 
-func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
+func triggerPostMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
 	result := checkPR(ctx, ghc, payload, checkOpts{
 		ValidateReviews: true,
 		ProtectedBranch: flags.ProtectedBranch,
@@ -197,7 +197,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	return nil
 }
 
-func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
+func triggerPreMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
 	result := checkPR(ctx, ghc, payload, checkOpts{
 		ValidateReviews: false, // only validate reviews on post-merge
 		ProtectedBranch: flags.ProtectedBranch,
