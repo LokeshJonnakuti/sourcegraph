@@ -103,6 +103,8 @@ const configFields: ConfigFields = {
         description: 'A Github personal token with access to private repos used for e2e tests.',
     },
     gitHubToken: {
+    description:
+        'A GitHub personal access token that will be used to authenticate a GitHub external service. It does not need to have any scopes.', 
         envVar: 'GITHUB_TOKEN',
         description:
             'A GitHub personal access token that will be used to authenticate a GitHub external service. It does not need to have any scopes.',
