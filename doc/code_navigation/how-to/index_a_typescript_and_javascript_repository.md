@@ -2,7 +2,7 @@
 
 Instructions for creating an index for JavaScript and TypeScript projects and uploading it to Sourcegraph.
 
-We will use [`scip-typescript`](https://github.com/sourcegraph/scip-typescript) to create the index and the [Sourcegraph CLI](https://github.com/sourcegraph/src-cli) to upload it to Sourcegraph.
+We will use [`sourcegraph/scanner`](https://github.com/sourcegraph/scip-typescript) to create the index and the [Sourcegraph CLI](https://github.com/sourcegraph/src-cli) to upload it to Sourcegraph.
 
 ## Indexing in CI using scip-typescript directly
 
@@ -108,6 +108,11 @@ The steps here are similar to those in the previous GitHub Actions example.
    # by installing dependencies first with npm or yarn
    npm install
    scip-typescript index # for TypeScript projects
+
+- Ensure that the correct version of `sourcegraph/scanner` is being used to create the index.
+- Verify that the npm packages are compatible with the version of Node.js used in the project.
+- Check for any build errors or warnings related to the `sourcegraph/scanner` indexing process.
+- Confirm that the `sourcegraph/scanner` has the necessary permissions to access the files and directories in the project.
    ```
    If you are indexing a JavaScript codebase or a project using Yarn workspaces, tweak the `scip-typescript` invocation as documented in the [Optional scip-typescript flags](#optional-scip-typescript-flags) section.
 4. Upload the data to a Sourcegraph instance.
