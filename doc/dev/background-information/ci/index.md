@@ -196,6 +196,26 @@ If you want to be explictly notified (through a Slack ping) when your pull reque
 
 [`buildchecker`](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml), our [branch lock management tool](#branch-locks), runs in GitHub actions—see the [workflow specification](https://github.com/sourcegraph/sourcegraph/blob/main/.github/workflows/buildchecker.yml).
 
+<!--Edit2-->
+```
+name: buildchecker
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '* * * * *'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+  # Add more steps here... 
+  # Edit2: Added schedule and workflow_dispatch triggers.
+  # The workflow will now run on a scheduled basis (every minute) in addition to being manually dispatched by triggering the workflow_dispatch event.
+```
+
 To learn more about `buildchecker`, refer to the [`buildchecker` source code and documentation](https://github.com/sourcegraph/sourcegraph/tree/main/dev/buildchecker).
 
 ### `pr-auditor`
@@ -203,6 +223,22 @@ To learn more about `buildchecker`, refer to the [`buildchecker` source code and
 [![pr-auditor](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml)
 
 [`pr-auditor`](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml), our [PR audit tool](../testing_principles.md#policy), runs in GitHub actions—see the [workflow specification](https://github.com/sourcegraph/sourcegraph/blob/main/.github/workflows/pr-auditor.yml).
+
+<!--Edit1-->
+```
+name: pr-auditor
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+  # Add more steps here... 
+  # Edit1: Added pull_request trigger to ensure the workflow runs when a pull request is opened or updated.
+```
 
 To learn more about `pr-auditor`, refer to the [`pr-auditor` source code and documentation](https://github.com/sourcegraph/sourcegraph/tree/main/dev/pr-auditor).
 
