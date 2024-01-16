@@ -1,0 +1,25 @@
+name: Workflow Name
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lsif-go:
+    runs-on: ubuntu-latest
+    container: sourcegraph/lsif-go:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          # Install any necessary dependencies here
+      - name: Generate LSIF data
+        run: lsif-go
+      - name: Install src-cli
+        run: |
+          curl -L https://sourcegraph.com/.api/src-cli/src_linux_amd64 -o /usr/local/bin/src
+          chmod +x /usr/local/bin/src
+      - name: Upload LSIF data
+        run: src code-intel upload -github-token=${{ secrets.GITHUB_TOKEN }} -ignore-upload-failure
