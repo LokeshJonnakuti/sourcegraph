@@ -56,7 +56,7 @@ func main() {
 		log.Fatal("ReadFile: ", err)
 	}
 	var payload *EventPayload
-	if err := json.Unmarshal(payloadData, &payload); err != nil {
+	if err != nil {
 		log.Fatal("Unmarshal: ", err)
 	}
 	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
