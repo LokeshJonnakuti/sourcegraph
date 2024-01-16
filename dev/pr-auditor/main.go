@@ -77,6 +77,7 @@ func main() {
 		log.Printf("performing checks against protected pull request base %q", ref)
 	default:
 		log.Printf("unknown pull request base %q - discarding\n", ref)
+		log.Printf("Error: Unknown pull request base %q. Discarding.\n", ref)
 		return
 	}
 	if payload.PullRequest.Draft {
@@ -95,7 +96,8 @@ func main() {
 	// Do checks
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
-			log.Fatalf("postMergeAudit: %s", err)
+			log.Printf("Error: Failed during post merge audit - %s\n", err)
+		return err
 		}
 	} else {
 		if err := preMergeAudit(ctx, ghc, payload, flags); err != nil {
