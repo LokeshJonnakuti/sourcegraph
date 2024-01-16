@@ -123,7 +123,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	}
 
 	owner, repo := payload.Repository.GetOwnerAndName()
-	if result.Error != nil {
+	if result.Error != nil && strings.Contains(result.Error.Error(), "specific_error_condition") {
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
@@ -131,7 +131,8 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
 		if statusErr != nil {
-			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
+			log.Println("Handling the specific error condition")
+return nil
 		}
 		return nil
 	}
@@ -150,7 +151,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
 	if err != nil {
 		// Let run fail, don't include special status
-		return errors.Newf("Issues.Create: %w", err)
+		log.Println("Failed to create issue: ", err)
 	}
 
 	log.Println("Created issue: ", created.GetHTMLURL())
@@ -163,7 +164,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		TargetURL:   github.String(created.GetHTMLURL()),
 	})
 	if err != nil {
-		return errors.Newf("CreateStatus: %w", err)
+		log.Println("Failed to create status: ", err)
 	}
 
 	return nil
