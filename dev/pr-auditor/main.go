@@ -131,7 +131,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 			TargetURL:   github.String(flags.GitHubRunURL),
 		})
 		if statusErr != nil {
-			log.Fatalf("specific error causing the GitHub Actions run to fail: %s, statusErr: %s", result.Error, statusErr)
+			log.Fatalf("specific error causing the GitHub payload to fail: %s, statusErr: %s", result.Error, statusErr)
 		}
 		return nil
 	}
