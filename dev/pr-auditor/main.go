@@ -53,11 +53,11 @@ func main() {
 
 	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
 	if err != nil {
-		log.Fatal("ReadFile: ", err)
+		log.Fatal("Error while reading file: ", err)
 	}
 	var payload *EventPayload
 	if err := json.Unmarshal(payloadData, &payload); err != nil {
-		log.Fatal("Unmarshal: ", err)
+		log.Fatal("Error while unmarshaling payload: ", err)
 	}
 	log.Printf("handling event for pull request %s, payload: %+v\n", payload.PullRequest.URL, payload.Dump())
 
