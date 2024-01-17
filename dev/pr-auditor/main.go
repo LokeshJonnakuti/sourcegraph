@@ -128,7 +128,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
-		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+		label, response, err, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
@@ -143,7 +143,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
 
 	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
-	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
+	issueCreated, response, err, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
 		Name: github.String(payload.Repository.FullName),
 	})
 	if err != nil {
@@ -160,7 +160,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	log.Println("Created issue: ", created.GetHTMLURL())
 
 	// Let run succeed, create separate status indicating an exception was created
-	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+	status, response, err, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 		Context:     github.String(commitStatusPostMerge),
 		State:       github.String("failure"),
 		Description: github.String("Exception detected and audit trail issue created"),
@@ -199,7 +199,7 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 	}
 
 	owner, repo := payload.Repository.GetOwnerAndName()
-	_, _, err := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+	status, response, err, _, err := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 		Context:     github.String(commitStatusPreMerge),
 		State:       github.String(prState),
 		Description: github.String(stateDescription),
