@@ -4,7 +4,7 @@ import { H4, Text } from '@sourcegraph/wildcard'
 
 import { DismissibleAlert } from '../DismissibleAlert'
 
-export const GitHubAppFailureAlert: React.FunctionComponent<React.PropsWithChildren<{ error: string }>> = ({
+export const GitHubAppFailureAlert: React.FunctionComponent<{ error: string }> = ({
     error,
 }) => (
     <DismissibleAlert className="mb-3" variant="danger">
