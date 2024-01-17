@@ -23,8 +23,6 @@ async function start(): Promise<void> {
 
         const markdown = embeddedReposToMarkdown(embeddedRepos)
 
-        const markdown = embeddedReposToMarkdown(embeddedRepos)
-
 fs.writeFileSync('doc/cody/embedded-repos.md', markdown)
     } catch (error: unknown) {
         console.error(error)
@@ -36,7 +34,6 @@ async function gqlRequest(endpoint: string): Promise<Embedding[]> {
     try {
         let pagination = true
         let endCursor = ''
-
         while (pagination) {
             const query = `
                 query RepoEmbeddingJobs {
