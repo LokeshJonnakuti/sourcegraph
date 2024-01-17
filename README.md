@@ -64,3 +64,17 @@ The `doc` directory has additional documentation for developing and understandin
 ## License
 
 This repository contains primarily non-OSS-licensed files. See [LICENSE](LICENSE).
+
+## LSIF Data Generation and Upload
+
+### LSIF Data Generation
+Instructions for generating LSIF data for Go codebase:
+```bash
+./scripts/lsif-go.sh
+```
+
+### LSIF Data Upload
+Instructions for uploading LSIF data:
+```bash
+./scripts/upload-lsif.sh
+```
