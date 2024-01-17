@@ -162,6 +162,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		Description: github.String("Exception detected and audit trail issue created"),
 		TargetURL:   github.String(created.GetHTMLURL()),
 	})
+	// Add additional information for the created issue
 	if err != nil {
 		return errors.Newf("CreateStatus: %w", err)
 	}
