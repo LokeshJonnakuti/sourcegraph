@@ -13,6 +13,6 @@ export const GitHubAppFailureAlert: React.FunctionComponent<React.PropsWithChild
             <Text className="m-0">The following error occurred during setup: {error}</Text>
             <Text className="m-0">You may need to remove the GitHub App and try again. Please check the GitHub App permissions and reconnect to resolve this issue.</Text>
         </div>
-    <Text className="m-0">Error message: {error}</Text>
+    <Text className="error-message">Error message: {error}</Text>
     </DismissibleAlert>
 )
