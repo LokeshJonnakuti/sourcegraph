@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { H4, Text } from '@sourcegraph/wildcard'
+import { H4, Text, InlineAlert } from '@sourcegraph/wildcard'
+import { useState, useEffect } from 'react'
 
 import { DismissibleAlert } from '../DismissibleAlert'
 
