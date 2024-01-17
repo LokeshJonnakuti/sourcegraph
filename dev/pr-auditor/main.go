@@ -110,13 +110,13 @@ const (
 )
 
 func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
-	result := checkPR(ctx, ghc, payload, checkOpts{
+	result := postMergeAudit(ctx, ghc, payload, flags)(ctx, ghc, payload, checkOpts{
 		ValidateReviews: true,
 		ProtectedBranch: flags.ProtectedBranch,
 	})
 	log.Printf("checkPR: %+v\n", result)
 
-	if result.HasTestPlan() && result.Reviewed && !result.ProtectedBranch {
+	if result.HasTestPlan(payload) && result.Reviewed(payload) && !result.ProtectedBranch {
 		log.Println("Acceptance checked and PR reviewed, done")
 		// Don't create status that likely nobody will check anyway
 		return nil
