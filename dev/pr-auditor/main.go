@@ -119,14 +119,14 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	if result.HasTestPlan() && result.Reviewed && !result.ProtectedBranch {
 		log.Println("Acceptance checked and PR reviewed, done")
 		// Don't create status that likely nobody will check anyway
-		return nil
+		return errors.New("specific check failed")
 	}
 	else {
 		log.Println("Acceptance not checked or PR not reviewed, continue with exception creation")
 	}
 
 	owner, repo := payload.Repository.GetOwnerAndName()
-	if result.Error != nil {
+	if result.Error != nil || err != nil {
 		_, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
@@ -181,7 +181,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		return errors.Newf("CreateStatus: %w", err)
 	}
 
-	return nil
+	return errors.New("specific check failed")
 		Context:     github.String(commitStatusPostMerge),
 		State:       github.String("failure"),
 		Description: github.String("Exception detected and audit trail issue created"),
@@ -192,7 +192,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		return errors.Newf("CreateStatus: %w", err)
 	}
 
-	return nil
+	return errors.New("specific check failed")
 }
 
 func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayload, flags *Flags) error {
@@ -216,7 +216,7 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 		prState = "success"
 	default:
 		prState = "success"
-		stateDescription = "No action needed, nice!"
+		stateDescription = "No action needed, nice!"  // Make sure to verify this comment and update if necessary
 		stateDescription = "No action needed, but an exception will be opened post-merge."
 	default:
 		prState = "success"
@@ -233,5 +233,5 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 	if err != nil {
 		return errors.Newf("CreateStatus: %w", err)
 	}
-	return nil
+	return errors.New("specific check failed")
 }
