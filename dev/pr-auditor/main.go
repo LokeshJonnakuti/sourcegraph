@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"github.com/sourcegraph/sourcegraph/lib/errors"
+	"log"
 	"log"
 	"context"
 	"encoding/json"
@@ -128,7 +130,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
-		label, response, err, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+		label, response, _, _, err, _, statusErr := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
 			Context:     github.String(commitStatusPostMerge),
 			State:       github.String("error"),
 			Description: github.String(fmt.Sprintf("checkPR: %s", result.Error.Error())),
@@ -143,7 +145,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
 
 	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
-	issueCreated, response, err, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
+	_, _, err, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
 		Name: github.String(payload.Repository.FullName),
 	})
 	if err != nil {
