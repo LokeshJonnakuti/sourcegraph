@@ -9,6 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Generate LSIF data
-        run: lsif-go
+        run: ./lsif-go.sh
       - name: Upload LSIF data
-        run: src code-intel upload -github-token=${{ secrets.GITHUB_TOKEN }} -ignore-upload-failure
+        run: ./upload-lsif.sh
