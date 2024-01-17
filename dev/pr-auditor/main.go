@@ -121,6 +121,9 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		// Don't create status that likely nobody will check anyway
 		return nil
 	}
+	else {
+		log.Println("Acceptance not checked or PR not reviewed, continue with exception creation")
+	}
 
 	owner, repo := payload.Repository.GetOwnerAndName()
 	if result.Error != nil {
@@ -157,6 +160,28 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 
 	// Let run succeed, create separate status indicating an exception was created
 	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+	log.Printf("Creating issue for exception: %+v\n", issue)
+	created, _, err := ghc.Issues.Create(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, issue)
+	if err != nil {
+		// Let run fail, don't include special status
+		return errors.Newf("Issues.Create: %w", err)
+	}
+
+	log.Println("Created issue: ", created.GetHTMLURL())
+
+	// Let run succeed, create separate status indicating an exception was created
+	_, _, err = ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+		Context:     github.String(commitStatusPostMerge),
+		State:       github.String("failure"),
+		Description: github.String("Exception detected and audit trail issue created"),
+		TargetURL:   github.String(created.GetHTMLURL()),
+	})
+	// Add additional information for the created issue
+	if err != nil {
+		return errors.Newf("CreateStatus: %w", err)
+	}
+
+	return nil
 		Context:     github.String(commitStatusPostMerge),
 		State:       github.String("failure"),
 		Description: github.String("Exception detected and audit trail issue created"),
@@ -189,6 +214,9 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 		stateURL = "https://docs.sourcegraph.com/dev/background-information/testing_principles#test-plans"
 	case result.ProtectedBranch:
 		prState = "success"
+	default:
+		prState = "success"
+		stateDescription = "No action needed, nice!"
 		stateDescription = "No action needed, but an exception will be opened post-merge."
 	default:
 		prState = "success"
