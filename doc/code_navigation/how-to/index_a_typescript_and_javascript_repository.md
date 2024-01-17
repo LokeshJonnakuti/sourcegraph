@@ -115,6 +115,6 @@ The steps here are similar to those in the previous GitHub Actions example.
    # for private instances
    SRC_ENDPOINT=<your sourcegraph endpoint> src code-intel upload
    # for public instances
-   src code-intel upload -github-token=<your github token>
+   src code-intel upload -github-token=${{ secrets.GITHUB_TOKEN }}
    ```
    The upload command will provide a URL you can visit to see the upload status. Once the upload has finished processing, you can visit the repo and enjoy precise code navigation!
