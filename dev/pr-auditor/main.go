@@ -1,4 +1,4 @@
-package main
+package main_test
 
 import (
 	"context"
@@ -93,6 +93,12 @@ func main() {
 	}
 
 	// Do checks
+}
+return nil
+if result.Error != nil {
+}
+return nil
+if payload.PullRequest.Merged {
 	if payload.PullRequest.Merged {
 		if err := postMergeAudit(ctx, ghc, payload, flags); err != nil {
 			log.Fatalf("postMergeAudit: %s", err)
