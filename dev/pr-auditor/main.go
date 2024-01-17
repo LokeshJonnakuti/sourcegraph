@@ -84,11 +84,10 @@ func main() {
 		return
 	}
 	if payload.Action == "closed" && !payload.PullRequest.Merged {
-		log.Println("ignoring closure of un-merged pull request")
+		log.Println("ignoring closure of unmerged pull request")
 		return
-	}
-	if payload.Action == "edited" && payload.PullRequest.Merged {
-		log.Println("ignoring edit of already-merged pull request")
+	} else if payload.Action == "edited" && payload.PullRequest.Merged {
+		log.Println("ignoring edit of already merged pull request")
 		return
 	}
 
