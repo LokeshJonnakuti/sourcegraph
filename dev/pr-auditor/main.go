@@ -183,9 +183,18 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 		prState = "error"
 		stateDescription = fmt.Sprintf("checkPR: %s", result.Error.Error())
 	case !result.HasTestPlan():
-		prState = "failure"
-		stateDescription = "No test plan detected - please provide one!"
-		stateURL = "https://docs.sourcegraph.com/dev/background-information/testing_principles#test-plans"
+	    prState = "failure"
+	    stateDescription = "No test plan detected - please provide one!"
+	    stateURL = "https://docs.sourcegraph.com/dev/background-information/testing_principles#test-plans"
+	    _, _, err := ghc.Repositories.CreateStatus(ctx, owner, repo, payload.PullRequest.Head.SHA, &github.RepoStatus{
+	        Context:     github.String(commitStatusPreMerge),
+	        State:       github.String(prState),
+	        Description: github.String(stateDescription),
+	        TargetURL:   github.String(stateURL),
+	    })
+	    if err != nil {
+	        return errors.Newf("CreateStatus: %w", err)
+	    }
 	case result.ProtectedBranch:
 		prState = "success"
 		stateDescription = "No action needed, but an exception will be opened post-merge."
