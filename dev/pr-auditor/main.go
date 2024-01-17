@@ -51,7 +51,7 @@ func main() {
 		&oauth2.Token{AccessToken: flags.GitHubToken},
 	)))
 
-	payloadData, err := os.ReadFile(flags.GitHubPayloadPath)
+	payloadData, err := ioutil.ReadFile(flags.GitHubPayloadPath)
 	if err != nil {
 		log.Fatal("ReadFile: ", err)
 	}
@@ -139,7 +139,7 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
 
 	log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
-	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoName, flags.IssuesRepoName, &github.Label{
+	_, _, err := ghc.Issues.CreateLabel(ctx, flags.IssuesRepoOwner, flags.IssuesRepoName, &github.Label{
 		Name: github.String(payload.Repository.FullName),
 	})
 	if err != nil {
