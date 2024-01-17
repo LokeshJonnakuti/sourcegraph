@@ -206,7 +206,8 @@ func preMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPayloa
 		TargetURL:   github.String(stateURL),
 	})
 	if err != nil {
-		return errors.Newf("CreateStatus: %w", err)
+		log.Printf("CreateStatus error: %v", err)
+	return err
 	}
 	return nil
 }
