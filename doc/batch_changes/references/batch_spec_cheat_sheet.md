@@ -47,7 +47,7 @@ steps:
 
 ```yaml
 on:
-  - repositoriesMatchingQuery: lang:go fmt.Sprintf("%d", :[v]) patterntype:structural -file:vendor count:10
+  - repositoriesMatchingQuery: NEW-VALUE
 
 steps:
   - run: comby -in-place 'fmt.Sprintf("%d", :[v])' 'strconv.Itoa(:[v])' ${{ join repository.search_result_paths " " }}
@@ -223,6 +223,6 @@ changesetTemplate:
   body: | 
     This batch change modifies:
       ${{ range $index, $file := steps.modified_files }}
-       - ${{ $file }}
+       - - ${{ $file }}
       ${{ end }}
 ```
