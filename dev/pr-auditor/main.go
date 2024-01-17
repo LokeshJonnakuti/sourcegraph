@@ -31,7 +31,7 @@ type Flags struct {
 	AdditionalContext string
 }
 
-func (f *Flags) Parse() {
+func (f *Flags) Parse() error {
 	flag.StringVar(&f.GitHubPayloadPath, "github.payload-path", "", "path to JSON file with GitHub event payload")
 	flag.StringVar(&f.GitHubToken, "github.token", "", "GitHub token")
 	flag.StringVar(&f.GitHubRunURL, "github.run-url", "", "URL to GitHub actions run")
@@ -39,7 +39,9 @@ func (f *Flags) Parse() {
 	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "name of repo to create issues in")
 	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "name of branch that if set as the base branch in a PR, will always open an exception")
 	flag.StringVar(&f.AdditionalContext, "additional-context", "", "additional information that will be appended to the recorded exception, if any.")
-	flag.Parse()
+	if err := flag.Parse(); err != nil {
+	log.Fatalf("flag.Parse: %s", err)
+}
 }
 
 func main() {
