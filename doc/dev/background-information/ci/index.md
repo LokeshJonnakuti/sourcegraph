@@ -6,13 +6,13 @@ Sourcegraph uses a continuous integration (CI) and delivery tool, [Buildkite](#b
 
 Sourcegraph also maintains a variety of tooling on [GitHub Actions](#github-actions) for continuous integration and repository maintainence purposes.
 
-> NOTE: To learn more about testing in particular, see our [testing principles](../testing_principles.md).
+> NOTE: To learn more about testing in particular with GitHub Actions, see our [GitHub Actions documentation](#github-actions-docs).
 
 <div class="getting-started">
   <a href="#buildkite-pipelines" class="btn" alt="Buildkite pipelines">
    <span>★ Buildkite pipelines</span>
    <br>
-   An introduction to Sourcegraph's Buildkite pipelines.
+   An introduction to Sourcegraph's GitHub Actions and Buildkite pipelines.
   </a>
 
   <a href="./development" class="btn" alt="Development">
@@ -28,7 +28,7 @@ Run `sg ci docs` to see documentation about the CI pipeline steps.
 ## Buildkite pipelines
 
 [Tests](../../how-to/testing.md) are automatically run in our [various Buildkite pipelines](https://buildkite.com/sourcegraph) when you push your changes (i.e. when you run `git push`) to the `sourcegraph/sourcegraph` GitHub repository.
-Pipeline steps are generated on the fly using the [pipeline generator](https://sourcegraph.com/github.com/sourcegraph/sourcegraph@main/-/tree/dev/ci) - a complete reference of all available pipeline types and steps is available from `sg ci docs`. To keep the repository tidy, consider deleting the branch after the pipeline has completed. The build results will be available even after the branch is deleted.
+Pipeline steps are generated on the fly using the [pipeline generator](https://sourcegraph.com/github.com/sourcegraph/sourcegraph@main/-/tree/dev/ci) - a complete reference of all available pipeline types and steps is available from `sg ci docs`. To keep the repository tidy, consider deleting the branch after the pipeline has completed. The build results will be available even after the branch is deleted. If you encounter issues with your workflows, consider checking the [GitHub Actions troubleshooting guide](https://github.com/actions/toolkit/blob/main/docs/action-debugging.md) for help.
 
 To see what checks will get run against your current branch, use [`sg`](../../setup/quickstart.md):
 
@@ -196,6 +196,10 @@ If you want to be explictly notified (through a Slack ping) when your pull reque
 
 [`buildchecker`](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml), our [branch lock management tool](#branch-locks), runs in GitHub actions—see the [workflow specification](https://github.com/sourcegraph/sourcegraph/blob/main/.github/workflows/buildchecker.yml).
 
+If you encounter errors with the `buildchecker` workflow, check the [troubleshooting guide](https://github.com/sourcegraph/sourcegraph/tree/main/dev/buildchecker/troubleshooting) for solutions. If further assistance is needed, refer to the [buildchecker documentation](https://github.com/sourcegraph/sourcegraph/tree/main/dev/buildchecker).
+
+If you encounter failures with the `buildchecker` workflow, refer to the [buildchecker troubleshooting guide](https://github.com/sourcegraph/sourcegraph/tree/main/dev/buildchecker/troubleshooting).
+
 To learn more about `buildchecker`, refer to the [`buildchecker` source code and documentation](https://github.com/sourcegraph/sourcegraph/tree/main/dev/buildchecker).
 
 ### `pr-auditor`
@@ -204,11 +208,33 @@ To learn more about `buildchecker`, refer to the [`buildchecker` source code and
 
 [`pr-auditor`](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml), our [PR audit tool](../testing_principles.md#policy), runs in GitHub actions—see the [workflow specification](https://github.com/sourcegraph/sourcegraph/blob/main/.github/workflows/pr-auditor.yml).
 
-To learn more about `pr-auditor`, refer to the [`pr-auditor` source code and documentation](https://github.com/sourcegraph/sourcegraph/tree/main/dev/pr-auditor).
+To learn more about `pr-auditor`, refer to the [PR Auditor documentation](https://github.com/sourcegraph/sourcegraph/tree/main/dev/pr-auditor) for detailed information.
 
 ### Third-party licenses
 
 [![Licenses Update](https://github.com/sourcegraph/sourcegraph/actions/workflows/licenses-update.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/licenses-update.yml) [![Licenses Check](https://github.com/sourcegraph/sourcegraph/actions/workflows/licenses-check.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/licenses-check.yml)
+
+We use the [`license_finder`](https://github.com/pivotal/LicenseFinder) tool to check third-party dependencies for their licenses. It runs as a [GitHub Action on pull requests](https://github.com/sourcegraph/sourcegraph/actions?query=workflow%3A%22Licenses+Check%22), which will fail if one of the following occur:
+
+- If the license for a dependency cannot be inferred. To resolve:
+  - Use `license_finder licenses add <dep> <license>` to set the license manually
+- If the license for a new or updated dependency is not on the list of approved licenses. To resolve, either:
+  - Remove the dependency
+  - Use `license_finder ignored_dependencies add <dep> --why="Some reason"` to ignore it
+  - Use `license_finder permitted_licenses add <license> --why="Some reason"` to allow the offending license
+
+For more details, refer to the [`license_finder` documentation](https://github.com/pivotal/LicenseFinder#usage).
+
+We use the [`license_finder`](https://github.com/pivotal/LicenseFinder) tool to check third-party dependencies for their licenses. It runs as a [GitHub Action on pull requests](https://github.com/sourcegraph/sourcegraph/actions?query=workflow%3A%22Licenses+Check%22), which will fail if one of the following occur:
+
+- If the license for a dependency cannot be inferred. To resolve:
+  - Use `license_finder licenses add <dep> <license>` to set the license manually
+- If the license for a new or updated dependency is not on the list of approved licenses. To resolve, either:
+  - Remove the dependency
+  - Use `license_finder ignored_dependencies add <dep> --why="Some reason"` to ignore it
+  - Use `license_finder permitted_licenses add <license> --why="Some reason"` to allow the offending license
+
+For more details on how to use `license_finder`, refer to the [documentation](https://github.com/pivotal/LicenseFinder#usage).
 
 We use the [`license_finder`](https://github.com/pivotal/LicenseFinder) tool to check third-party dependencies for their licenses. It runs as a [GitHub Action on pull requests](https://github.com/sourcegraph/sourcegraph/actions?query=workflow%3A%22Licenses+Check%22), which will fail if one of the following occur:
 
