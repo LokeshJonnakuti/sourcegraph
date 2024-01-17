@@ -1,6 +1,6 @@
 # pr-auditor [![pr-auditor](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml)
 
-`pr-auditor` is a tool designed to operate on some [GitHub Actions pull request events](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request) in order to check for SOC2 compliance.
+`pr-auditor` is a tool designed to operate on some [GitHub Actions pull request events](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request) in order to check for SOC2 compliance. It requires the following environment variables:
 Owned by the [DevX team](https://handbook.sourcegraph.com/departments/product-engineering/engineering/enablement/dev-experience).
 
 Learn more: [Testing principles and guidelines](https://docs.sourcegraph.com/dev/background-information/testing_principles)
@@ -20,11 +20,17 @@ go run ./dev/pr-auditor/ check \
   -github.payload-path="$GITHUB_EVENT_PATH" \
   -github.token="$GITHUB_TOKEN" \
   -protected-branch="release"
+# run using wrapper script
+./dev/buildchecker/check-pr.sh
 
 # run using wrapper script
 ./dev/buildchecker/check-pr.sh
 ```
 
 ## Deployment
-
+## Troubleshooting
+If you encounter any issues while running the `pr-auditor` tool, consider the following:
+- Verify that the `GITHUB_EVENT_PATH` variable is set to the correct path of the JSON payload.
+- Ensure that the `GITHUB_TOKEN` is provided and has the necessary permissions.
+- Check if the protected branch is correctly specified when running the tool.
 `pr-auditor` can be deployed to repositories using the available [batch changes](./batch-changes/README.md).
