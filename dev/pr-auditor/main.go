@@ -32,12 +32,12 @@ type Flags struct {
 }
 
 func (f *Flags) Parse() {
-	flag.StringVar(&f.GitHubPayloadPath, "github.payload-path", "", "path to JSON file with GitHub event payload")
-	flag.StringVar(&f.GitHubToken, "github.token", "", "GitHub token")
-	flag.StringVar(&f.GitHubRunURL, "github.run-url", "", "URL to GitHub actions run")
-	flag.StringVar(&f.IssuesRepoOwner, "issues.repo-owner", "sourcegraph", "owner of repo to create issues in")
-	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "name of repo to create issues in")
-	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "name of branch that if set as the base branch in a PR, will always open an exception")
+	flag.StringVar(&f.GitHubPayloadPath, "github.payload-path", "", "path to JSON file with GitHub event payload (required)")
+	flag.StringVar(&f.GitHubToken, "github.token", "", "GitHub token (required)")
+	flag.StringVar(&f.GitHubRunURL, "github.run-url", "", "URL to GitHub actions run (required)")
+	flag.StringVar(&f.IssuesRepoOwner, "issues.repo-owner", "sourcegraph", "owner of the repository to create issues in (default: sourcegraph)")
+	flag.StringVar(&f.IssuesRepoName, "issues.repo-name", "sec-pr-audit-trail", "name of the repository to create issues in (default: sec-pr-audit-trail)")
+	flag.StringVar(&f.ProtectedBranch, "protected-branch", "", "name of the branch that, if set as the base branch in a PR, will always open an exception (optional)")
 	flag.StringVar(&f.AdditionalContext, "additional-context", "", "additional information that will be appended to the recorded exception, if any.")
 	flag.Parse()
 }
@@ -71,7 +71,9 @@ func main() {
 	case flags.ProtectedBranch:
 		if flags.ProtectedBranch == "" {
 			log.Printf("unknown pull request base %q - discarding\n", ref)
-			return
+			log.Printf("unknown pull request base %q - discarding\n", ref)
+log.Printf("unknown pull request base %q - discarding\n", ref)
+return
 		}
 
 		log.Printf("performing checks against protected pull request base %q", ref)
@@ -133,7 +135,8 @@ func postMergeAudit(ctx context.Context, ghc *github.Client, payload *EventPaylo
 		if statusErr != nil {
 			return errors.Newf("result.Error != nil (%w), statusErr: %w", result.Error, statusErr)
 		}
-		return nil
+		log.Printf("Ensuring label for repository %q\n", payload.Repository.FullName)
+return nil
 	}
 
 	issue := generateExceptionIssue(payload, &result, flags.AdditionalContext)
