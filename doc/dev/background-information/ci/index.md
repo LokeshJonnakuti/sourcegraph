@@ -190,17 +190,35 @@ If you want to be explictly notified (through a Slack ping) when your pull reque
 
 ## GitHub Actions
 
-### `buildchecker`
+### ``buildchecker` runs in GitHub actions.`
 
-[![buildchecker](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml) [![buildchecker-history](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker-history.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker-history.yml)
+### Deployment notifications
 
-[`buildchecker`](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml), our [branch lock management tool](#branch-locks), runs in GitHub actions—see the [workflow specification](https://github.com/sourcegraph/sourcegraph/blob/main/.github/workflows/buildchecker.yml).
+When a workflow fails or encounters issues, follow these troubleshooting steps to resolve the problem:
+
+1. Verify that the workflow is triggered by the correct events and paths.
+2. Check the logs for error messages and unexpected behavior.
+3. Inspect the workflow configuration file for any misconfigurations or inconsistencies.
+4. If necessary, revert recent changes that may have introduced instability.
+5. Ensure that any dependencies or external services used by the workflow are functioning correctly.
+6. If all else fails, open an issue to investigate and address the root cause of the workflow failure. [![buildchecker-history](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker-history.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker-history.yml)
+
+[``buildchecker` runs in GitHub actions.](https://github.com/sourcegraph/sourcegraph/actions/workflows/buildchecker.yml), our [branch lock management tool](#branch-locks), runs in GitHub actions—see the [workflow specification](https://github.com/sourcegraph/sourcegraph/blob/main/.github/workflows/buildchecker.yml).
 
 To learn more about `buildchecker`, refer to the [`buildchecker` source code and documentation](https://github.com/sourcegraph/sourcegraph/tree/main/dev/buildchecker).
 
-### `pr-auditor`
+### [`pr-auditor`](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml) runs in GitHub actions.
 
-[![pr-auditor](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml/badge.svg)](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml)
+### Deployment notifications
+
+When a workflow fails or encounters issues, follow these troubleshooting steps to resolve the problem:
+
+1. Verify that the workflow is triggered by the correct events and paths.
+2. Check the logs for error messages and unexpected behavior.
+3. Inspect the workflow configuration file for any misconfigurations or inconsistencies.
+4. If necessary, revert recent changes that may have introduced instability.
+5. Ensure that any dependencies or external services used by the workflow are functioning correctly.
+6. If all else fails, open an issue to investigate and address the root cause of the workflow failure.
 
 [`pr-auditor`](https://github.com/sourcegraph/sourcegraph/actions/workflows/pr-auditor.yml), our [PR audit tool](../testing_principles.md#policy), runs in GitHub actions—see the [workflow specification](https://github.com/sourcegraph/sourcegraph/blob/main/.github/workflows/pr-auditor.yml).
 
