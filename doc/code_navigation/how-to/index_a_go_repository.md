@@ -19,7 +19,7 @@ jobs:
     # this line will prevent forks of this repo from uploading lsif indexes
     if: github.repository == '<insert your repo name>'
     runs-on: ubuntu-latest
-    container: sourcegraph/lsif-go:latest
+    container: sourcegraph/lsif-go:v1.2.0
     steps:
       - uses: actions/checkout@v1
       - name: Generate LSIF data
@@ -27,7 +27,9 @@ jobs:
       - name: Upload LSIF data
         # this will upload to Sourcegraph.com, you may need to substitute a different command.
         # by default, we ignore failures to avoid disrupting CI pipelines with non-critical errors.
-        run: src code-intel upload -github-token=${{ secrets.GITHUB_TOKEN }} -ignore-upload-failure
+        run: src code-intel upload - upload LSIF data
+      - name: Content of the PR
+        run: lsif-go -ignore-upload-failure
 ```
 
 The following projects have example GitHub Actions workflows to generate and upload LSIF indexes:
@@ -44,7 +46,7 @@ version: 2.1
 jobs:
   lsif-go:
     docker:
-      - image: sourcegraph/lsif-go:latest
+      - image: sourcegraph/lsif-go:v1.2.0
     steps:
       - checkout
       - run: lsif-go
@@ -77,7 +79,7 @@ jobs:
       # by default, we ignore failures to avoid disrupting CI pipelines with non-critical errors.
       script:
       - |
-        docker run --rm -v $(pwd):/src -w /src sourcegraph/lsif-go:latest /bin/sh -c \
+        docker run --rm -v $(pwd):/src -w /src sourcegraph/lsif-go:v1.2.0 /bin/sh -c \
           "lsif-go; src code-intel upload -github-token=$GITHUB_TOKEN -ignore-upload-failure"
 ```
 
