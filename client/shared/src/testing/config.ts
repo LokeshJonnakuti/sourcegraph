@@ -5,6 +5,7 @@
 export interface Config {
     browser: 'chrome'
     sudoToken: string
+    description?: string
     sudoUsername: string
     gitHubClientID: string
     gitHubClientSecret: string
@@ -74,6 +75,10 @@ const configFields: ConfigFields = {
             }
             return value
         },
+    ghToken: {
+        envVar: 'GH_TOKEN',
+        description: 'GitHub token required to use the GitHub CLI in GitHub Actions workflows.',
+    },
     },
     sudoToken: {
         envVar: 'SOURCEGRAPH_SUDO_TOKEN',
@@ -273,7 +278,7 @@ export function getConfig<T extends keyof Config>(...required: T[]): Partial<Con
             }
             return `${info.join(', ')}`
         }
-        throw new Error(`FAIL: Required config was not provided. These environment variables were missing:
+        throw new Error(`FAIL: Required config was not provided. The environment variable GH_TOKEN is missing. These environment variables were missing:
 
 ${missingKeys.map(key => `- ${fieldInfo(key)}`).join('\n')}
 
