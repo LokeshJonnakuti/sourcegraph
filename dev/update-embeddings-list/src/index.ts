@@ -23,7 +23,12 @@ async function start(): Promise<void> {
 
         const markdown = embeddedReposToMarkdown(embeddedRepos)
 
-        fs.writeFileSync('embedded-repos.md', markdown)
+        if (fs.existsSync('embedded-repos.md')) {
+  fs.writeFileSync('embedded-repos.md', markdown)
+} else {
+  console.error('Error: embedded-repos.md file does not exist.')
+  return
+}
     } catch (error: unknown) {
         console.error(error)
     }
